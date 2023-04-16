@@ -1,0 +1,46 @@
+name: "Windows | MSVC++ | x64 | Debug "
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - include/**
+      - test/**
+      - .github/workflows/build_and_test_windows_msvc_x64_debug.yml
+      - CMakeLists.txt
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - include/**
+      - test/**
+      - .github/workflows/build_and_test_windows_msvc_x64_debug.yml
+      - CMakeLists.txt
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 1.59.0
+      
+      - name: Resolve dependencies
+        run: |
+          conan profile new default --detect
+          conan install . -s build_type=${{env.BUILD_TYPE}} --install-folder=${{github.workspace}}/build/msvc/x64/debug --build=missing
+
+      - name: Configure
+        run: cmake -B ${{github.workspace}}/build/msvc/x64/debug -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build/msvc/x64/debug --config Debug
+
+      - name: Test
+        working-directory: ${{github.workspace}}\build\msvc\x64\debug\test\Debug
+        shell: cmd
+        run: ${{github.workspace}}\build\msvc\x64\debug\test\Debug\proj_nameTest.exe
