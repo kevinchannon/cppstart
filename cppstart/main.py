@@ -1,6 +1,8 @@
 import argparse
 import shutil
 import os
+import appdirs
+import configparser
 
 
 def rename_all_the_things(root_dir: str, proj_name: str):
@@ -28,27 +30,32 @@ def rename_all_the_things(root_dir: str, proj_name: str):
 
 
 def license_choices():
-    license_dir_path = os.path.join("../templates", "licenses")
+    license_dir_path = os.path.join("templates", "licenses")
     return [f for f in os.listdir(license_dir_path) if os.path.isfile(os.path.join(license_dir_path, f))]
 
 
 def copy_license_file(new_license: str, root_dir: str):
-    license_path = os.path.join("../templates", "licenses", new_license)
+    license_path = os.path.join("templates", "licenses", new_license)
     shutil.copy(license_path, root_dir)
     os.remove(os.path.join(root_dir, "LICENSE"))
     os.rename(os.path.join(root_dir, new_license), os.path.join(root_dir, "LICENSE"))
 
 
 def update_file_license_info(new_license: str, root_dir: str):
-    template_license_text = "* SPDX-License-Identifier:"
-    updated_license_text = "* SPDX-License-Identifier: " + new_license
+    replace_in_files(root_dir, "* SPDX-License-Identifier:", "* SPDX-License-Identifier: " + new_license)
+
+
+def update_copyright(copyright_name: str, root_dir: str):
+    replace_in_files(root_dir, "Copyright (c)", "Copyright (c) " + copyright_name)
+
+
+def replace_in_files(root_dir: str, old_text: str, new_text: str):
     for root, dirs, files in os.walk(root_dir):
         for file in files:
-            # Open each file and read its contents
             with open(os.path.join(root, file), 'r') as f:
                 contents = f.read()
 
-            new_contents = contents.replace(template_license_text, updated_license_text)
+            new_contents = contents.replace(old_text, new_text)
 
             with open(os.path.join(root, file), 'w') as f:
                 f.write(new_contents)
@@ -58,16 +65,36 @@ def update_license(new_license: str, root_dir: str):
     copy_license_file(new_license, root_dir)
     update_file_license_info(new_license, root_dir)
 
+
+def ask_for_users_name():
+    return input("No user config. Enter your name (i.e. 'Stan Smith')\n>")
+
+
 def main():
+
+    config = configparser.ConfigParser()
+
+    config_dir = appdirs.user_config_dir(appname="cppstart", appauthor=False)
+    config_file_path = os.path.join(config_dir, 'config.ini')
+    if os.path.isfile(config_file_path):
+        config.read(config_file_path)
+    else:
+        config["user"] = {"copyright_name": ask_for_users_name()}
+        os.makedirs(config_dir, exist_ok=True)
+        with open(config_file_path, "w") as cfg_file:
+            config.write(cfg_file)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("proj_name", help="name of the project")
     parser.add_argument("-d", "--output_directory", default=".", help="output directory")
     parser.add_argument("-l", "--license", choices=license_choices(), default="MIT",
                         help="the license that will be used in the project")
+    parser.add_argument("-c", "--copyright-name", default=config["user"]["copyright_name"],
+                        help="name that will be used in copyright info")
 
     args = parser.parse_args()
 
-    src_dir = os.path.join("../templates", "projects", "default")
+    src_dir = os.path.join("templates", "projects", "default")
     dest_dir = os.path.join(args.output_directory, args.proj_name)
     shutil.copytree(src_dir, dest_dir)
 
@@ -76,9 +103,10 @@ def main():
     rename_all_the_things(dest_dir, args.proj_name)
     rename_all_the_things(dest_dir, args.proj_name)
 
-    os.rename(os.path.join(dest_dir, "template.gitignore"), os.path.join(dest_dir, "../.gitignore"))
+    os.rename(os.path.join(dest_dir, "template.gitignore"), os.path.join(dest_dir, ".gitignore"))
 
     update_license(args.license, dest_dir)
+    update_copyright(args.copyright_name, dest_dir)
 
 
 if __name__ == "__main__":
