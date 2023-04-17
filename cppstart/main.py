@@ -28,12 +28,12 @@ def rename_all_the_things(root_dir: str, proj_name: str):
 
 
 def license_choices():
-    license_dir_path = os.path.join("templates", "licenses")
+    license_dir_path = os.path.join("../templates", "licenses")
     return [f for f in os.listdir(license_dir_path) if os.path.isfile(os.path.join(license_dir_path, f))]
 
 
 def copy_license_file(new_license: str, root_dir: str):
-    license_path = os.path.join("templates", "licenses", new_license)
+    license_path = os.path.join("../templates", "licenses", new_license)
     shutil.copy(license_path, root_dir)
     os.remove(os.path.join(root_dir, "LICENSE"))
     os.rename(os.path.join(root_dir, new_license), os.path.join(root_dir, "LICENSE"))
@@ -67,7 +67,7 @@ def main():
 
     args = parser.parse_args()
 
-    src_dir = os.path.join("templates", "projects", "default")
+    src_dir = os.path.join("../templates", "projects", "default")
     dest_dir = os.path.join(args.output_directory, args.proj_name)
     shutil.copytree(src_dir, dest_dir)
 
@@ -76,7 +76,7 @@ def main():
     rename_all_the_things(dest_dir, args.proj_name)
     rename_all_the_things(dest_dir, args.proj_name)
 
-    os.rename(os.path.join(dest_dir, "template.gitignore"), os.path.join(dest_dir, ".gitignore"))
+    os.rename(os.path.join(dest_dir, "template.gitignore"), os.path.join(dest_dir, "../.gitignore"))
 
     update_license(args.license, dest_dir)
 
