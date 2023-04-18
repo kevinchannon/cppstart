@@ -4,6 +4,7 @@ import os
 import appdirs
 import configparser
 import datetime
+import git
 
 
 def rename_all_the_things(root_dir: str, proj_name: str):
@@ -71,6 +72,17 @@ def ask_for_users_name():
     return input("No user config. Enter your name (i.e. 'Stan Smith')\n>")
 
 
+def initialise_git(dest_dir: str):
+    original_dir = os.getcwd()
+    os.chdir(dest_dir)
+
+    repo = git.Repo.init(os.getcwd())
+    repo.git.add(all=True)
+    repo.index.commit("Initial commit")
+
+    os.chdir(original_dir)
+
+
 def main():
 
     config = configparser.ConfigParser()
@@ -108,6 +120,8 @@ def main():
 
     update_license(args.license, dest_dir)
     update_copyright(args.copyright_name, dest_dir)
+
+    initialise_git(dest_dir)
 
 
 if __name__ == "__main__":
