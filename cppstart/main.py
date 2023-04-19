@@ -5,6 +5,7 @@ import appdirs
 import configparser
 import datetime
 import git
+import pathlib
 
 
 def rename_all_the_things(root_dir: str, proj_name: str):
@@ -31,13 +32,13 @@ def rename_all_the_things(root_dir: str, proj_name: str):
                 os.rename(dir_path, new_dir_path)
 
 
-def license_choices():
-    license_dir_path = os.path.join("templates", "licenses")
+def license_choices(pkg_dir_path: str):
+    license_dir_path = os.path.join(pkg_dir_path, "templates", "licenses")
     return [f for f in os.listdir(license_dir_path) if os.path.isfile(os.path.join(license_dir_path, f))]
 
 
-def copy_license_file(new_license: str, root_dir: str):
-    license_path = os.path.join("templates", "licenses", new_license)
+def copy_license_file(new_license: str, root_dir: str, pkg_dir_path:str):
+    license_path = os.path.join(pkg_dir_path, "templates", "licenses", new_license)
     shutil.copy(license_path, root_dir)
     os.remove(os.path.join(root_dir, "LICENSE"))
     os.rename(os.path.join(root_dir, new_license), os.path.join(root_dir, "LICENSE"))
@@ -63,8 +64,8 @@ def replace_in_files(root_dir: str, old_text: str, new_text: str):
                 f.write(new_contents)
 
 
-def update_license(new_license: str, root_dir: str):
-    copy_license_file(new_license, root_dir)
+def update_license(new_license: str, root_dir: str, pkg_dir_path: str):
+    copy_license_file(new_license, root_dir, pkg_dir_path)
     update_file_license_info(new_license, root_dir)
 
 
@@ -85,6 +86,8 @@ def initialise_git(dest_dir: str):
 
 def main():
 
+    pkg_dir_path = str(pathlib.Path(__file__).absolute().parent)
+
     config = configparser.ConfigParser()
 
     config_dir = appdirs.user_config_dir(appname="cppstart", appauthor=False)
@@ -100,14 +103,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("proj_name", help="name of the project")
     parser.add_argument("-d", "--output_directory", default=".", help="output directory")
-    parser.add_argument("-l", "--license", choices=license_choices(), default="MIT",
+    parser.add_argument("-l", "--license", choices=license_choices(pkg_dir_path), default="MIT",
                         help="the license that will be used in the project")
     parser.add_argument("-c", "--copyright-name", default=config["user"]["copyright_name"],
                         help="name that will be used in copyright info")
 
     args = parser.parse_args()
 
-    src_dir = os.path.join("templates", "projects", "default")
+    src_dir = os.path.join(pkg_dir_path, "templates", "projects", "default")
     dest_dir = os.path.join(args.output_directory, args.proj_name)
     shutil.copytree(src_dir, dest_dir)
 
@@ -118,7 +121,7 @@ def main():
 
     os.rename(os.path.join(dest_dir, "template.gitignore"), os.path.join(dest_dir, ".gitignore"))
 
-    update_license(args.license, dest_dir)
+    update_license(args.license, dest_dir, pkg_dir_path)
     update_copyright(args.copyright_name, dest_dir)
 
     initialise_git(dest_dir)
