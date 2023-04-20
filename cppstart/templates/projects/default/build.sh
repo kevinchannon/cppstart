@@ -3,7 +3,7 @@
 set -e
 
 BUILD_TYPE="Debug"
-BUILD_DIR=$(<.cppstart/install_dir)
+BUILD_DIR=$(cat .cppstart/install_dir_${BUILD_TYPE})
 
 while getopts ":t:" opt; do
   case ${opt} in
