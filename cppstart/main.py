@@ -88,27 +88,36 @@ def initialise_git(dest_dir: str):
 def main():
     pkg_dir_path = str(pathlib.Path(__file__).absolute().parent)
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("proj_name", help="name of the project")
+    parser.add_argument("-d", "--output_directory", default=".", help="output directory")
+    parser.add_argument("-l", "--license", choices=license_choices(pkg_dir_path), default="MIT",
+                        help="the license that will be used in the project")
+    parser.add_argument("-c", "--copyright-name",
+                        help="name that will be used in copyright info")
+
+    args = parser.parse_args()
+
     config = configparser.ConfigParser()
 
     config_dir = appdirs.user_config_dir(appname="cppstart", appauthor=False)
     config_file_path = os.path.join(config_dir, 'config.ini')
     if os.path.isfile(config_file_path):
         config.read(config_file_path)
+
+        if args.copyright_name is not None:
+            config["user"] = {"copyright_name": args.copyright_name}
+            with open(config_file_path, "w") as cfg_file:
+                config.write(cfg_file)
     else:
-        config["user"] = {"copyright_name": ask_for_users_name()}
+        if args.copyright_name is None:
+            config["user"] = {"copyright_name": ask_for_users_name()}
+        else:
+            config["user"] = {"copyright_name": args.copyright_name}
+
         os.makedirs(config_dir, exist_ok=True)
         with open(config_file_path, "w") as cfg_file:
             config.write(cfg_file)
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("proj_name", help="name of the project")
-    parser.add_argument("-d", "--output_directory", default=".", help="output directory")
-    parser.add_argument("-l", "--license", choices=license_choices(pkg_dir_path), default="MIT",
-                        help="the license that will be used in the project")
-    parser.add_argument("-c", "--copyright-name", default=config["user"]["copyright_name"],
-                        help="name that will be used in copyright info")
-
-    args = parser.parse_args()
 
     src_dir = os.path.join(pkg_dir_path, "templates", "projects", "default")
     dest_dir = os.path.join(args.output_directory, args.proj_name)
