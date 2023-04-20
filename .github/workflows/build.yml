@@ -24,5 +24,6 @@ jobs:
           pip install ./dist/cppstart-?.?.?.tar.gz
           cppstart foo -c "some user"
           cd foo
+          ls -la
           ./init.sh
           ./build.sh
