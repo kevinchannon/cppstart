@@ -18,25 +18,20 @@ jobs:
       - uses: turtlebrowser/get-conan@v1.2
         with:
           version: 1.59.0
+      - uses: egor-tensin/setup-gcc@v1
+        with:
+          version: 12
+          platform: x64
 
       - name: Build source package
         run: python setup.py sdist
-
-      - name: Install GCC12
-        shell: bash
-        run:  |
-          sudo apt update
-          sudo apt install gcc-12 g++-12
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 120 --slave /usr/bin/g++ g++ /usr/bin/g++-12 --slave /usr/bin/gcov gcov /usr/bin/gcov-12
-
-      - name: Resolve dependencies
-        run: conan profile new default --detect
 
       - name: Test
         run: |
           pip install ./dist/cppstart-?.?.?.tar.gz
           cppstart foo -c "some user"
           cd foo
+          conan profile new default --detect
           chmod +x init.sh
           chmod +x build.sh
           ./init.sh
