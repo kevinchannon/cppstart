@@ -23,6 +23,6 @@ jobs:
         run: |
           pip install ./dist/cppstart-?.?.?.tar.gz
           cppstart foo -c "some user"
-          cd cppstart
+          cd foo
           ./init.sh
           ./build.sh
