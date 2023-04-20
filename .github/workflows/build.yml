@@ -4,12 +4,12 @@ on:
   push:
     branches: [ "master" ]
     paths:
-      - *
+      - ./*
       - !.github/workflows/release.yml
   pull_request:
     branches: [ "master" ]
     paths:
-      - *
+      - ./*
       - !.github/workflows/release.yml
 
 env:
