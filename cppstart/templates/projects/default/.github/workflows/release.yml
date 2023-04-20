@@ -1,0 +1,41 @@
+name: Release
+permissions:
+  contents: write
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: Version to release
+                default: v1.0.0
+                required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create version number
+        run: |
+          mkdir -p build/package
+          echo ${{ github.event.inputs.version }} | sed 's/^v//' > build/package/version.txt
+
+      - name: Configure CMake
+        run: cmake -B build/package -DPROJECT_VERSION:STRING=$(cat build/package/version.txt)
+
+      - name: Package source code
+        run: cmake --build build/package --target proj_name_package
+
+      - name: Pack NuGet package
+        run: |
+          nuget pack packaging/proj_name.nuspec -Properties version=$(cat build/package/version.txt) -OutputDirectory build/package
+
+      - name: Add packaged source code to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          file: build/package/proj_name*
+          tag: ${{ github.event.inputs.version }}
+          overwrite: true
