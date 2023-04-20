@@ -35,12 +35,12 @@ jobs:
           conan install . -s build_type=${{env.BUILD_TYPE}} --install-folder=${{github.workspace}}/build/msvc/x64/debug --build=missing
 
       - name: Configure
-        run: cmake -B ${{github.workspace}}/build/msvc/x64/debug -DCMAKE_BUILD_TYPE=Debug
+        run: cmake -B ${{github.workspace}}/build/msvc/x64/debug -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build/msvc/x64/debug --config Debug
+        run: cmake --build ${{github.workspace}}/build/msvc/x64/debug --config ${{env.BUILD_TYPE}}
 
       - name: Test
-        working-directory: ${{github.workspace}}\build\msvc\x64\debug\test\Debug
+        working-directory: ${{github.workspace}}\build\msvc\x64\debug\test\${{env.BUILD_TYPE}}
         shell: cmd
-        run: ${{github.workspace}}\build\msvc\x64\debug\test\Debug\proj_nameTest.exe
+        run: ${{github.workspace}}\build\msvc\x64\debug\test\${{env.BUILD_TYPE}}\proj_nameTest.exe
