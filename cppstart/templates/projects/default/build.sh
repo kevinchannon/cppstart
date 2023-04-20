@@ -3,7 +3,6 @@
 set -e
 
 BUILD_TYPE="Debug"
-BUILD_DIR=$(cat .cppstart/install_dir_${BUILD_TYPE})
 
 while getopts ":t:" opt; do
   case ${opt} in
@@ -21,7 +20,7 @@ while getopts ":t:" opt; do
   esac
 done
 
-BUILD_DIR="$BUILD_DIR"_"$BUILD_TYPE"
+BUILD_DIR=$(cat .cppstart/install_dir_${BUILD_TYPE})
 
 cmake -B "$BUILD_DIR"
 cmake --build "$BUILD_DIR"
