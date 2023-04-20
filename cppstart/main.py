@@ -37,7 +37,7 @@ def license_choices(pkg_dir_path: str):
     return [f for f in os.listdir(license_dir_path) if os.path.isfile(os.path.join(license_dir_path, f))]
 
 
-def copy_license_file(new_license: str, root_dir: str, pkg_dir_path:str):
+def copy_license_file(new_license: str, root_dir: str, pkg_dir_path: str):
     license_path = os.path.join(pkg_dir_path, "templates", "licenses", new_license)
     shutil.copy(license_path, root_dir)
     os.remove(os.path.join(root_dir, "LICENSE"))
@@ -49,7 +49,8 @@ def update_file_license_info(new_license: str, root_dir: str):
 
 
 def update_copyright(copyright_name: str, root_dir: str):
-    replace_in_files(root_dir, "Copyright (c) [year] [fullname]", f"Copyright (c) {datetime.datetime.now().year} {copyright_name}")
+    replace_in_files(root_dir, "Copyright (c) [year] [fullname]",
+                     f"Copyright (c) {datetime.datetime.now().year} {copyright_name}")
 
 
 def replace_in_files(root_dir: str, old_text: str, new_text: str):
