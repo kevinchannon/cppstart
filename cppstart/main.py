@@ -49,7 +49,7 @@ def update_file_license_info(new_license: str, root_dir: str):
 
 
 def update_copyright(copyright_name: str, root_dir: str):
-    replace_in_files(root_dir, "Copyright (c)", f"Copyright (c) {datetime.datetime.now().year} {copyright_name}")
+    replace_in_files(root_dir, "Copyright (c) [year] [fullname]", f"Copyright (c) {datetime.datetime.now().year} {copyright_name}")
 
 
 def replace_in_files(root_dir: str, old_text: str, new_text: str):

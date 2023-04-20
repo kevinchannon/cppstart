@@ -1,7 +1,7 @@
 /*
 * SPDX-License-Identifier:
 *
-* Copyright (c)
+* Copyright (c) [year] [fullname]
 *
 */
 
