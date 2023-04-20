@@ -3,14 +3,8 @@ name: "Ubuntu | GCC 12 | x64 | Debug "
 on:
   push:
     branches: [ "master" ]
-    paths:
-      - ./**
-      - !.github/workflows/release.yml
   pull_request:
     branches: [ "master" ]
-    paths:
-      - ./**
-      - !.github/workflows/release.yml
 
 env:
   BUILD_TYPE: Debug
