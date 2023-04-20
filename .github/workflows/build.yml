@@ -22,7 +22,7 @@ jobs:
       - name: Test
         run: |
           pip install ./dist/cppstart-?.?.?.tar.gz
-          cppstart foo
+          printf "some user" | cppstart foo
           cd cppstart
           ./init.sh
           ./build.sh
