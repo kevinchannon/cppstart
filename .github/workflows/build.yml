@@ -1,0 +1,32 @@
+name: "Ubuntu | GCC 12 | x64 | Debug "
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - !.github/workflows/release.yml
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - !.github/workflows/release.yml
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build source package
+        run: python setup.py sdist
+
+      - name: Test
+        run: |
+          pip install ./dist/cppstart-?.?.?.tar.gz
+          cppstart foo
+          cd cppstart
+          ./init.sh
+          ./build.sh

@@ -85,7 +85,6 @@ def initialise_git(dest_dir: str):
 
 
 def main():
-
     pkg_dir_path = str(pathlib.Path(__file__).absolute().parent)
 
     config = configparser.ConfigParser()
