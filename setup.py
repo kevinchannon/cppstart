@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
 import packaging.version
 
+print(dir(packaging.version))
+
 setup(
     name="cppstart",
     version=packaging.version.number,
