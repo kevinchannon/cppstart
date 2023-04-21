@@ -19,7 +19,7 @@ jobs:
           cat packaging/version.py
 
       - name: Build package
-        run: python setup.py sdist
+        run: pipenv run setup.py sdist
 
       - name: Add packaged source code to release
         uses: svenstaro/upload-release-action@v2
