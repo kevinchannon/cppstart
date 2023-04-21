@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+import packaging.version
 
 setup(
     name="cppstart",
-    version="1.0.0",
+    version=packaging.version.number,
     packages=find_packages(),
     entry_points={
         "console_scripts": [

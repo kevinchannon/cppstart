@@ -1,0 +1,29 @@
+name: Release
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create version number
+        run: echo "number = ${GITHUB_REF#refs/*/}" | sed 's/^v//' > packaging/version.py
+
+      - name: Build package
+        run: python .\setup.py sdist
+
+      - name: Add packaged source code to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          file: dist/cppstart-*.*.*.tar.gz
+          tag: ${GITHUB_REF#refs/*/}
+          overwrite: true
