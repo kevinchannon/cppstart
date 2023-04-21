@@ -14,7 +14,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Create version number
-        run: echo "number = ${GITHUB_REF#refs/*/}" | sed 's/^v//' > packaging/version.py
+        run: |
+          echo "number = ${GITHUB_REF#refs/*/}" | sed 's/^v//' > packaging/version.py
+          cat packaging/version.py
 
       - name: Build package
         run: python setup.py sdist
