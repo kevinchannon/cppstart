@@ -17,7 +17,7 @@ jobs:
         run: echo "number = ${GITHUB_REF#refs/*/}" | sed 's/^v//' > packaging/version.py
 
       - name: Build package
-        run: python .\setup.py sdist
+        run: python setup.py sdist
 
       - name: Add packaged source code to release
         uses: svenstaro/upload-release-action@v2
