@@ -18,10 +18,16 @@ jobs:
           echo "number = '${GITHUB_REF#refs/*/}'" | sed 's/v//' > packaging/version.py
           cat packaging/version.py
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.11
+
+      - name: Install pipenv
+        run: pip install pipenv
+
       - name: Build package
-        run: |
-          pip install --upgrade pipenv
-          pipenv run setup.py sdist
+        run: pipenv run setup.py sdist
 
       - name: Add packaged source code to release
         uses: svenstaro/upload-release-action@v2
