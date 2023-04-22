@@ -35,5 +35,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
           file: dist/cppstart-*.*.*.tar.gz
-          tag: ${GITHUB_REF#refs/*/}
+          tag: '${GITHUB_REF#refs/*/}'
           overwrite: true
