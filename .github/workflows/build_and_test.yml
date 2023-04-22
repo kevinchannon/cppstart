@@ -22,10 +22,14 @@ jobs:
         with:
           version: 12
           platform: x64
-
-      - name: Build source package
-        run: python setup.py sdist
-
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+      - name: Install build dependencies
+        run: python3 -m pip install -U setuptools wheel appdirs gitpython
+      - name: Build package
+        run: python3 setup.py sdist
       - name: Test
         run: |
           pip install ./dist/cppstart-?.?.?.tar.gz

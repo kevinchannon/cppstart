@@ -24,7 +24,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install build dependencies
-        run: python -m pip install -U setuptools wheel appdirs gitpython
+        run: python3 -m pip install -U setuptools wheel appdirs gitpython
 
       - name: Build package
         run: python3 setup.py sdist
