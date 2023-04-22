@@ -19,10 +19,10 @@ jobs:
           cat packaging/version.py
 
       - name: Install pipenv
-        run: pip install pipenv
+        run: pip3 install pipenv
 
       - name: Build package
-        run: pipenv run python setup.py sdist
+        run: pipenv run python3 setup.py sdist
 
       - name: Add packaged source code to release
         uses: svenstaro/upload-release-action@v2
