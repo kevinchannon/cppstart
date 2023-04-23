@@ -15,7 +15,7 @@ jobs:
 
       - name: Create version number
         run: |
-          echo "number = '${GITHUB_REF#refs/*/}'" | sed 's/v//' > VERSION
+          echo "number = '${GITHUB_REF#refs/*/}'" | sed 's/v//' > packaging/VERSION
           cat VERSION
 
       - name: Set up Python
