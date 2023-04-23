@@ -18,18 +18,22 @@ jobs:
       - uses: turtlebrowser/get-conan@v1.2
         with:
           version: 1.59.0
+
       - uses: egor-tensin/setup-gcc@v1
         with:
           version: 12
           platform: x64
+
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install build dependencies
+          cache: 'pip' # caching pip dependencies
         run: python3 -m pip install -U setuptools wheel appdirs gitpython
+
       - name: Build package
         run: python3 setup.py sdist
+
       - name: Test
         run: |
           pip install ./dist/cppstart-?.?.?.tar.gz

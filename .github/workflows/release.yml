@@ -19,11 +19,10 @@ jobs:
           cat packaging/version.py
 
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-
-      - name: Install build dependencies
+          cache: 'pip' # caching pip dependencies
         run: python3 -m pip install -U setuptools wheel appdirs gitpython
 
       - name: Build package
@@ -35,5 +34,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
           file: dist/cppstart-*.*.*.tar.gz
-          tag: '${GITHUB_REF#refs/*/}'
+          tag: ${{ github.ref }}
           overwrite: true
