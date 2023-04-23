@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: '3.x'
           cache: 'pip' # caching pip dependencies
-        run: python3 -m pip install -U setuptools wheel appdirs gitpython
+      - run: python3 -m pip install -U setuptools wheel appdirs gitpython
 
       - name: Build package
         run: python3 setup.py sdist
