@@ -1,3 +1,4 @@
 .idea/**
 /cppstart.egg-info/
 /dist/
+/src/cppstart.egg-info/*
