@@ -15,18 +15,18 @@ jobs:
 
       - name: Create version number
         run: |
-          echo "number = '${GITHUB_REF#refs/*/}'" | sed 's/v//' > packaging/version.py
-          cat packaging/version.py
+          echo "number = '${GITHUB_REF#refs/*/}'" | sed 's/v//' > VERSION
+          cat VERSION
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           cache: 'pip' # caching pip dependencies
-      - run: python3 -m pip install -U setuptools wheel appdirs gitpython
+      - run: python3 -m pip install -U build
 
       - name: Build package
-        run: python3 setup.py sdist
+        run: python3 -m build --sdist
 
       - name: Add packaged source code to release
         uses: svenstaro/upload-release-action@v2

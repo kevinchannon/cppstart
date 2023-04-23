@@ -1,1 +1,1 @@
-recursive-include cppstart/templates *
+recursive-include src/cppstart/templates *

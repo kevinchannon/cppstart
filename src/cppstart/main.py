@@ -131,7 +131,7 @@ def main():
     os.rename(os.path.join(dest_dir, "template.gitignore"), os.path.join(dest_dir, ".gitignore"))
 
     update_license(args.license, dest_dir, pkg_dir_path)
-    update_copyright(args.copyright_name, dest_dir)
+    update_copyright(config["user"]["copyright_name"], dest_dir)
 
     initialise_git(dest_dir)
 

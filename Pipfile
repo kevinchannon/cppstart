@@ -7,6 +7,7 @@ name = "pypi"
 wheel = "*"
 appdirs = "*"
 gitpython = "*"
+build = "*"
 
 [dev-packages]
 
