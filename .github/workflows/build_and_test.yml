@@ -31,6 +31,9 @@ jobs:
           cache: 'pip' # caching pip dependencies
       - run: python3 -m pip install -U build
 
+      - name: Run tests
+        run: python3 -m unittest discover tests
+
       - name: Build package
         run: python3 -m build --sdist
 
