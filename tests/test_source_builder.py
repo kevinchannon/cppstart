@@ -22,6 +22,12 @@ class SourceBuilderTests(unittest.TestCase):
         self.assertTrue(Path("/foo/src/foo/foo.cpp") in contents)
         self.assertEqual(contents[Path("/foo/src/foo/foo.cpp")], "#include <proj_name/proj_name.hpp>\n")
 
+    def test_app_source_builder_adds_(self):
+        contents = AppSourceBuilder(Path("/foo")).get_content()
+        self.assertTrue(Path("/foo/src/main.cpp") in contents)
+        self.assertEqual(contents[Path("/foo/src/main.cpp")],
+                         "#include <proj_name/proj_name.hpp>\n\nauto main() -> int {\n    return 0;\n}\n")
+
 
 if __name__ == '__main__':
     unittest.main()
