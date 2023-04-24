@@ -8,6 +8,7 @@ wheel = "*"
 appdirs = "*"
 gitpython = "*"
 build = "*"
+parameterized = "*"
 
 [dev-packages]
 

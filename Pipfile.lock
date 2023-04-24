@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2bbed35140e0ef2073e3a80912ffdead18401c809c3fbcd71ae49f25e66356ce"
+            "sha256": "594083ebcfc23fd1981ecfcf71797300059835e301095a190f7b3b7a8d71c01c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -64,6 +64,14 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==23.1"
+        },
+        "parameterized": {
+            "hashes": [
+                "sha256:4e0758e3d41bea3bbd05ec14fc2c24736723f243b28d702081aef438c9372b1b",
+                "sha256:7fc905272cefa4f364c1a3429cbbe9c0f98b793988efb5bf90aac80f08db09b1"
+            ],
+            "index": "pypi",
+            "version": "==0.9.0"
         },
         "pyproject-hooks": {
             "hashes": [

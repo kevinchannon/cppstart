@@ -27,3 +27,12 @@ class AppSourceBuilder(__SourceBuilder):
         return {**base_content,
                 self._output_root / "src" / self._proj_name / f"{self._proj_name}.cpp": self._PROJ_SRC,
                 self._output_root / "src" / "main.cpp": self._PROJ_MAIN}
+
+
+class LibSourceBuilder(__SourceBuilder):
+    _PROJ_SRC = "#include <proj_name/proj_name.hpp>\n"
+
+    def get_content(self):
+        base_content = super().get_content()
+        return {**base_content,
+                self._output_root / "src" / self._proj_name / f"{self._proj_name}.cpp": self._PROJ_SRC}
