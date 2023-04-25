@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: textbook/git-checkout-submodule-action@master
 
       - name: Create version number
         run: |

@@ -1,0 +1,12 @@
+[submodule "e2e_test/bats"]
+	path = e2e_test/bats
+	url = https://github.com/bats-core/bats-core.git
+[submodule "e2e_test/test_helper/bats-support"]
+	path = e2e_test/test_helper/bats-support
+	url = https://github.com/bats-core/bats-support.git
+[submodule "e2e_test/test_helper/bats-assert"]
+	path = e2e_test/test_helper/bats-assert
+	url = https://github.com/bats-core/bats-assert.git
+[submodule "e2e_test/test_helper/bats-file"]
+	path = e2e_test/test_helper/bats-file
+	url = https://github.com/bats-core/bats-file.git

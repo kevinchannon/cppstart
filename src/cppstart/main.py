@@ -95,6 +95,8 @@ def main():
                         help="the license that will be used in the project")
     parser.add_argument("-c", "--copyright-name",
                         help="name that will be used in copyright info")
+    parser.add_argument("-L", "--lib", action="store_true", help="create a library project")
+    parser.add_argument("-A", "--app", action="store_true", help="create an application project")
 
     args = parser.parse_args()
 
