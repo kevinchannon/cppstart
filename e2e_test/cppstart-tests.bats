@@ -8,11 +8,21 @@ setup() {
     PATH="$DIR/../src:$PATH"
 }
 
-teardown() {
-    rm -rf ../../foo
+teardown_file() {
+    rm -rf foo
 }
 
 @test "creates a directory for the new project" {
-    PYTHONPATH=../ python src/cppstart/main.py foo --lib -d ../../ -c "Some user"
-    assert_exist ../../foo
+  cppstart foo -c "some user"
+  assert_exist foo
+}
+
+@test "new project dependencies can be resolved out of the box" {
+  cd foo
+  ./init.sh
+}
+
+@test "new project can be built out of the box" {
+  cd foo
+  ./build.sh
 }
