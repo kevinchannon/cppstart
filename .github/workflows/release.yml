@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: textbook/git-checkout-submodule-action@master
 
       - name: Create version number
         run: |
@@ -25,6 +24,9 @@ jobs:
           python-version: '3.x'
           cache: 'pip' # caching pip dependencies
       - run: python3 -m pip install -U build
+
+      - name: Checkout submodules
+        run: git submodule update --init
 
       - name: Build package
         run: python3 -m build --sdist

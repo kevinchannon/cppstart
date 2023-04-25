@@ -15,7 +15,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: textbook/git-checkout-submodule-action@master
       - uses: turtlebrowser/get-conan@v1.2
         with:
           version: 1.59.0
@@ -30,6 +29,9 @@ jobs:
         with:
           python-version: '3.x'
           cache: 'pip' # caching pip dependencies
+
+      - name: Checkout submodules
+        run: git submodule update --init
 
       - name: Install Python dependencies
         run: python3 -m pip install -U build parameterized
