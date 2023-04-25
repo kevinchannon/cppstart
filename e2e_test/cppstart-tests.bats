@@ -13,6 +13,6 @@ teardown() {
 }
 
 @test "creates a directory for the new project" {
-    PYTHONPATH=../ python src/cppstart/main.py foo --lib -d ../../
+    PYTHONPATH=../ python src/cppstart/main.py foo --lib -d ../../ -c "Some user"
     assert_exist ../../foo
 }
