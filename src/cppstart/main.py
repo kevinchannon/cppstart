@@ -131,6 +131,8 @@ def main():
     rename_all_the_things(dest_dir, args.proj_name)
 
     os.rename(os.path.join(dest_dir, "template.gitignore"), os.path.join(dest_dir, ".gitignore"))
+    os.chmod(os.path.join(dest_dir, "init.sh"), 0o755)
+    os.chmod(os.path.join(dest_dir, "build.sh"), 0o755)
 
     update_license(args.license, dest_dir, pkg_dir_path)
     update_copyright(config["user"]["copyright_name"], dest_dir)
