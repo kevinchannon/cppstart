@@ -1,4 +1,5 @@
 import unittest
+from argparse import ArgumentError
 
 from src.cppstart.cppstart import *
 
