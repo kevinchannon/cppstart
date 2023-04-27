@@ -16,9 +16,11 @@ class FileWriterTests(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(TEST_DIR, ignore_errors=True)
+        if os.path.exists("foo.txt"):
+            os.remove("foo.txt")
 
     @parameterized.expand([
-        ("single file in current directory", {TEST_DIR / "foo.txt": "Hello, foo!"}),
+        ("single file in current directory", {Path("foo.txt"): "Hello, foo!"}),
         ("single file in a nested directory", {TEST_DIR / "foo/bar.txt": "Hello, FooBar!"})
     ])
     def test_writes_contents_to_files(self, test_name, things_to_write):
