@@ -3,15 +3,18 @@ from pathlib import Path
 
 from source_builder import *
 from project_type import ProjectType
+from file_writer import FileWriter
 
 
 class CppStart:
-    def __init__(self, source_builder: SourceBuilder):
+    def __init__(self, source_builder: SourceBuilder, file_writer: FileWriter):
         self._source_builder = source_builder
+        self._file_writer = file_writer
 
 
 def make_cppstart(args) -> CppStart:
-    return CppStart(make_source_builder(args.project_type, Path(args.output_directory)))
+    return CppStart(make_source_builder(args.project_type, args.proj_name),
+                    FileWriter(args.output_directory))
 
 
 def get_command_line_parser() -> argparse.ArgumentParser:

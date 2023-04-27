@@ -18,13 +18,12 @@ class __SourceBuilder(SourceBuilder):
     _INCLUDE = """#include <cstdint>\n"""
     _EXAMPLES_MAIN = "#include <proj_name/proj_name.hpp>\n\nauto main() -> int {\n    return 0;\n}\n"
 
-    def __init__(self, output_root: Path):
-        self._output_root = output_root
-        self._proj_name = self._output_root.name
+    def __init__(self, project_name: str):
+        self._proj_name = project_name
 
     def _get_content(self) -> Dict[Path, str]:
-        return {self._output_root / "include" / self._proj_name / f"{self._proj_name}.hpp": self._INCLUDE,
-                self._output_root / "examples" / "main.cpp": self._EXAMPLES_MAIN}
+        return {Path("include") / self._proj_name / f"{self._proj_name}.hpp": self._INCLUDE,
+                Path("examples") / "main.cpp": self._EXAMPLES_MAIN}
 
 
 class AppSourceBuilder(__SourceBuilder):
@@ -34,8 +33,8 @@ class AppSourceBuilder(__SourceBuilder):
     def get_content(self):
         base_content = super()._get_content()
         return {**base_content,
-                self._output_root / "src" / self._proj_name / f"{self._proj_name}.cpp": self._PROJ_SRC,
-                self._output_root / "src" / "main.cpp": self._PROJ_MAIN}
+                Path("src") / self._proj_name / f"{self._proj_name}.cpp": self._PROJ_SRC,
+                Path("src") / "main.cpp": self._PROJ_MAIN}
 
 
 class LibSourceBuilder(__SourceBuilder):
@@ -44,11 +43,11 @@ class LibSourceBuilder(__SourceBuilder):
     def get_content(self):
         base_content = super()._get_content()
         return {**base_content,
-                self._output_root / "src" / self._proj_name / f"{self._proj_name}.cpp": self._PROJ_SRC}
+                Path("src") / self._proj_name / f"{self._proj_name}.cpp": self._PROJ_SRC}
 
 
-def make_source_builder(project_type: ProjectType, root_dir: Path):
+def make_source_builder(project_type: ProjectType, project_name: str):
     if ProjectType.APP == project_type:
-        return AppSourceBuilder(root_dir)
+        return AppSourceBuilder(project_name)
     if ProjectType.LIB == project_type:
-        return LibSourceBuilder(root_dir)
+        return LibSourceBuilder(project_name)
