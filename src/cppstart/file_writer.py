@@ -3,8 +3,12 @@ from pathlib import Path
 
 
 class FileWriter:
+    def __init__(self, root_dir: Path):
+        self._root_dir = root_dir
+
     def write(self, things: dict[Path, str]):
-        for path in things:
+        for rel_path in things:
+            path = self._root_dir / rel_path
             if not path.parent.exists():
                 os.makedirs(path.parent)
-            path.write_text(things[path])
+            path.write_text(things[rel_path])

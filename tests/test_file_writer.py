@@ -12,26 +12,25 @@ TEST_DIR = Path("test_files")
 
 def get_many_files_in_hierarchy() -> dict[Path, str]:
     return {
-        Path("foo.txt"): "foo.txt",
-        TEST_DIR / "a.txt": "a.txt",
-        TEST_DIR / "b.txt": "b.txt",
-        TEST_DIR / "c.txt": "c.txt",
-        TEST_DIR / "d/a.txt": "da.txt",
-        TEST_DIR / "d/b.txt": "db.txt",
-        TEST_DIR / "d/c.txt": "dc.txt",
-        TEST_DIR / "e/a.txt": "ea.txt",
-        TEST_DIR / "e/b.txt": "eb.txt",
-        TEST_DIR / "e/c.txt": "ec.txt",
-        TEST_DIR / "f/a.txt": "fa.txt",
-        TEST_DIR / "f/b.txt": "fb.txt",
-        TEST_DIR / "f/g/c.txt": "fgc.txt",
-        TEST_DIR / "h/i/a.txt": "hia.txt",
-        TEST_DIR / "h/i/b.txt": "hib.txt",
-        TEST_DIR / "h/i/c.txt": "hic.txt",
-        TEST_DIR / "h/i/j/a.txt": "hija.txt",
-        TEST_DIR / "h/i/j/b.txt": "hijb.txt",
-        TEST_DIR / "h/i/j/c.txt": "hijc.txt",
-        TEST_DIR / "h/i/j/k/l/m/c.txt": "hijklmc.txt"
+        Path("a.txt"): "a.txt",
+        Path("b.txt"): "b.txt",
+        Path("c.txt"): "c.txt",
+        Path("d/a.txt"): "da.txt",
+        Path("d/b.txt"): "db.txt",
+        Path("d/c.txt"): "dc.txt",
+        Path("e/a.txt"): "ea.txt",
+        Path("e/b.txt"): "eb.txt",
+        Path("e/c.txt"): "ec.txt",
+        Path("f/a.txt"): "fa.txt",
+        Path("f/b.txt"): "fb.txt",
+        Path("f/g/c.txt"): "fgc.txt",
+        Path("h/i/a.txt"): "hia.txt",
+        Path("h/i/b.txt"): "hib.txt",
+        Path("h/i/c.txt"): "hic.txt",
+        Path("h/i/j/a.txt"): "hija.txt",
+        Path("h/i/j/b.txt"): "hijb.txt",
+        Path("h/i/j/c.txt"): "hijc.txt",
+        Path("h/i/j/k/l/m/c.txt"): "hijklmc.txt"
     }
 
 
@@ -45,17 +44,18 @@ class FileWriterTests(unittest.TestCase):
             os.remove("foo.txt")
 
     @parameterized.expand([
-        ("single file in current directory", {Path("foo.txt"): "Hello, foo!"}),
-        ("single file in a nested directory", {TEST_DIR / "foo/bar.txt": "Hello, FooBar!"}),
-        ("multiple files in multiple nested directories", get_many_files_in_hierarchy())
+        ("single file in current directory", Path("."), {Path("foo.txt"): "Hello, foo!"}),
+        ("single file in a nested directory", TEST_DIR, {Path("foo/bar.txt"): "Hello, FooBar!"}),
+        ("multiple files in multiple nested directories", TEST_DIR, get_many_files_in_hierarchy())
     ])
-    def test_writes_contents_to_files(self, _, things_to_write):
-        writer = FileWriter()
+    def test_writes_contents_to_files(self, _, root_dir: Path, things_to_write: dict[Path, str]):
+        writer = FileWriter(root_dir)
         writer.write(things_to_write)
 
-        for path in things_to_write:
+        for rel_path in things_to_write:
+            path = root_dir / rel_path
             self.assertTrue(path.exists())
-            self.assertEqual(things_to_write[path], path.read_text())
+            self.assertEqual(things_to_write[rel_path], path.read_text())
 
 
 if __name__ == '__main__':
