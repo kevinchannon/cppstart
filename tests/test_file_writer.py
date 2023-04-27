@@ -35,7 +35,6 @@ def get_many_files_in_hierarchy() -> dict[Path, str]:
     }
 
 
-
 class FileWriterTests(unittest.TestCase):
     def setup(self):
         os.makedirs(TEST_DIR, exist_ok=True)
@@ -50,7 +49,7 @@ class FileWriterTests(unittest.TestCase):
         ("single file in a nested directory", {TEST_DIR / "foo/bar.txt": "Hello, FooBar!"}),
         ("multiple files in multiple nested directories", get_many_files_in_hierarchy())
     ])
-    def test_writes_contents_to_files(self, test_name, things_to_write):
+    def test_writes_contents_to_files(self, _, things_to_write):
         writer = FileWriter()
         writer.write(things_to_write)
 
