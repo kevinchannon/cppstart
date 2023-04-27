@@ -1,5 +1,4 @@
 import unittest
-from argparse import ArgumentError
 
 from src.cppstart.cppstart import *
 
@@ -26,6 +25,18 @@ class ArgParserTests(unittest.TestCase):
         self.assertTrue(get_command_line_parser().parse_args(["foo", "--app"]).is_app)
         self.assertFalse(get_command_line_parser().parse_args(["foo", "-A"]).is_lib)
         self.assertTrue(get_command_line_parser().parse_args(["foo", "-A"]).is_app)
+
+
+class CppStartTests(unittest.TestCase):
+    def test_factory_creates_lib_source_builder_when_args_has_is_lib(self):
+        args = get_command_line_parser().parse_args(["foo", "--lib"])
+        app = make_cppstart(args)
+        self.assertTrue(isinstance(app._source_builder, LibSourceBuilder))
+
+    def test_factory_creates_app_source_builder_when_args_has_is_app(self):
+        args = get_command_line_parser().parse_args(["foo", "--app"])
+        app = make_cppstart(args)
+        self.assertTrue(isinstance(app._source_builder, AppSourceBuilder))
 
 
 if __name__ == '__main__':
