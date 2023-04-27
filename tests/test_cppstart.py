@@ -16,15 +16,14 @@ class ArgParserTests(unittest.TestCase):
         self.assertEqual(".", get_command_line_parser().parse_args(["foo"]).output_directory)
 
     def test_project_type_is_set_correctly(self):
-        self.assertTrue(get_command_line_parser().parse_args(["foo", "--lib"]).is_lib)
-        self.assertFalse(get_command_line_parser().parse_args(["foo", "--lib"]).is_app)
-        self.assertTrue(get_command_line_parser().parse_args(["foo", "-L"]).is_lib)
-        self.assertFalse(get_command_line_parser().parse_args(["foo", "-L"]).is_app)
+        self.assertEqual(ProjectType.LIB, get_command_line_parser().parse_args(["foo", "--lib"]).project_type)
+        self.assertEqual(ProjectType.LIB, get_command_line_parser().parse_args(["foo", "-L"]).project_type)
 
-        self.assertFalse(get_command_line_parser().parse_args(["foo", "--app"]).is_lib)
-        self.assertTrue(get_command_line_parser().parse_args(["foo", "--app"]).is_app)
-        self.assertFalse(get_command_line_parser().parse_args(["foo", "-A"]).is_lib)
-        self.assertTrue(get_command_line_parser().parse_args(["foo", "-A"]).is_app)
+        self.assertEqual(ProjectType.APP, get_command_line_parser().parse_args(["foo", "--app"]).project_type)
+        self.assertEqual(ProjectType.APP, get_command_line_parser().parse_args(["foo", "-A"]).project_type)
+
+    def test_default_project_type_is_app(self):
+        self.assertEqual(ProjectType.APP, get_command_line_parser().parse_args(["foo"]).project_type)
 
 
 class CppStartTests(unittest.TestCase):
