@@ -1,23 +1,29 @@
 import os
 import unittest
 from pathlib import Path
+from parameterized import parameterized
 
 from src.cppstart.file_writer import *
 
 
 class FileWriterTests(unittest.TestCase):
-    _file_in_current_dir = Path("foo.txt")
+    _things_to_remove = []
 
     def tearDown(self):
-        if self._file_in_current_dir.exists():
-            os.remove(self._file_in_current_dir)
+        for path in self._things_to_remove:
+            os.remove(path)
 
-    def test_writes_contents_to_files_in_current_directory(self):
+    @parameterized.expand([
+        ("single file in current directory", {Path("foo.txt"): "Hello, foo!"})
+    ])
+    def test_writes_contents_to_files(self, test_name, things_to_write):
         writer = FileWriter()
-        writer.write({self._file_in_current_dir: "Hello, Foo!"})
+        writer.write(things_to_write)
 
-        self.assertTrue(self._file_in_current_dir.exists())
-        self.assertEqual("Hello, Foo!", self._file_in_current_dir.read_text())
+        for path in things_to_write:
+            self.assertTrue(path.exists())
+            self._things_to_remove.append(path)
+            self.assertEqual(things_to_write[path], path.read_text())
 
 
 if __name__ == '__main__':
