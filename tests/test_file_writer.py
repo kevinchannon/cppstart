@@ -1,20 +1,25 @@
 import os
 import unittest
 from pathlib import Path
+import shutil
 from parameterized import parameterized
 
 from src.cppstart.file_writer import *
 
 
+TEST_DIR = Path("test_files")
+
+
 class FileWriterTests(unittest.TestCase):
-    _things_to_remove = []
+    def setup(self):
+        os.makedirs(TEST_DIR, exist_ok=True)
 
     def tearDown(self):
-        for path in self._things_to_remove:
-            os.remove(path)
+        shutil.rmtree(TEST_DIR, ignore_errors=True)
 
     @parameterized.expand([
-        ("single file in current directory", {Path("foo.txt"): "Hello, foo!"})
+        ("single file in current directory", {TEST_DIR / "foo.txt": "Hello, foo!"}),
+        ("single file in a nested directory", {TEST_DIR / "foo/bar.txt": "Hello, FooBar!"})
     ])
     def test_writes_contents_to_files(self, test_name, things_to_write):
         writer = FileWriter()
@@ -22,7 +27,6 @@ class FileWriterTests(unittest.TestCase):
 
         for path in things_to_write:
             self.assertTrue(path.exists())
-            self._things_to_remove.append(path)
             self.assertEqual(things_to_write[path], path.read_text())
 
 
