@@ -8,6 +8,8 @@ from pathlib import Path
 from project_type import ProjectType
 
 
+
+
 class SourceBuilder(ABC):
     @abstractmethod
     def get_content(self) -> dict[Path, str]:
@@ -15,6 +17,7 @@ class SourceBuilder(ABC):
 
 
 class __SourceBuilder(SourceBuilder):
+    _LICENSED_SOURCE = "{}\n\n{}"
     _INCLUDE = """#include <cstdint>\n"""
     _EXAMPLES_MAIN = "#include <proj_name/proj_name.hpp>\n\nauto main() -> int {\n    return 0;\n}\n"
 
@@ -25,8 +28,8 @@ class __SourceBuilder(SourceBuilder):
         self._license_text = license_text
 
         if self._license_text is not None:
-            self._include = f"{self._license_text}\n\n{self._INCLUDE}"
-            self._examples_main = f"{self._license_text}\n\n{self._EXAMPLES_MAIN}"
+            self._include = self._LICENSED_SOURCE.format(self._license_text, self._INCLUDE)
+            self._examples_main = self._LICENSED_SOURCE.format(self._license_text, self._EXAMPLES_MAIN)
         else:
             self._include = self._INCLUDE
             self._examples_main = self._EXAMPLES_MAIN
@@ -44,8 +47,8 @@ class AppSourceBuilder(__SourceBuilder):
         super().__init__(project_name, license_text)
 
         if self._license_text is not None:
-            self._proj_src = f"{self._license_text}\n\n{self._PROJ_SRC}"
-            self._proj_main = f"{self._license_text}\n\n{self._PROJ_MAIN}"
+            self._proj_src = self._LICENSED_SOURCE.format(self._license_text, self._PROJ_SRC)
+            self._proj_main = self._LICENSED_SOURCE.format(self._license_text, self._PROJ_MAIN)
         else:
             self._proj_src = self._PROJ_SRC
             self._proj_main = self._PROJ_MAIN
@@ -64,7 +67,7 @@ class LibSourceBuilder(__SourceBuilder):
         super().__init__(project_name, license_text)
 
         if self._license_text is not None:
-            self._proj_src = f"{self._license_text}\n\n{self._PROJ_SRC}"
+            self._proj_src = self._LICENSED_SOURCE.format(self._license_text, self._PROJ_SRC)
         else:
             self._proj_src = self._PROJ_SRC
 
