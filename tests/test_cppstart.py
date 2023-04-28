@@ -31,20 +31,20 @@ class CppStartTests(unittest.TestCase):
     def test_factory_creates_lib_source_builder_when_args_has_is_lib(self):
         args = get_command_line_parser().parse_args(["foo", "--lib"])
         app = make_cppstart(args)
-        self.assertTrue(isinstance(app._source_builder, LibSourceBuilder))
+        self.assertTrue(isinstance(app._source_generator, LibSourceGenerator))
 
     def test_factory_creates_app_source_builder_when_args_has_is_app(self):
         args = get_command_line_parser().parse_args(["foo", "--app"])
         app = make_cppstart(args)
-        self.assertTrue(isinstance(app._source_builder, AppSourceBuilder))
+        self.assertTrue(isinstance(app._source_generator, AppSourceGenerator))
 
     def test_writes_files(self):
-        src_gen = AppSourceBuilder("foo")
+        src_gen = AppSourceGenerator("foo")
         src_gen.get_content = MagicMock(return_value={Path("Some/Path"): "some content"})
         writer = FileWriter(Path("foo"))
         writer.write = MagicMock()
 
-        cpp_start = CppStart(source_builder=src_gen, file_writer=writer)
+        cpp_start = CppStart(source_generator=src_gen, file_writer=writer)
         cpp_start.run()
 
         writer.write.assert_called_with({Path("Some/Path"): "some content"})

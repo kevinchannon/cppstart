@@ -8,15 +8,13 @@ from pathlib import Path
 from project_type import ProjectType
 
 
-
-
-class SourceBuilder(ABC):
+class SourceGenerator(ABC):
     @abstractmethod
     def get_content(self) -> dict[Path, str]:
         pass
 
 
-class __SourceBuilder(SourceBuilder):
+class __SourceGenerator(SourceGenerator):
     _LICENSED_SOURCE = "{}\n\n{}"
     _INCLUDE = """#include <cstdint>\n"""
     _EXAMPLES_MAIN = "#include <proj_name/proj_name.hpp>\n\nauto main() -> int {\n    return 0;\n}\n"
@@ -39,7 +37,7 @@ class __SourceBuilder(SourceBuilder):
                 Path("examples") / "main.cpp": self._examples_main}
 
 
-class AppSourceBuilder(__SourceBuilder):
+class AppSourceGenerator(__SourceGenerator):
     _PROJ_SRC = "#include <proj_name/proj_name.hpp>\n"
     _PROJ_MAIN = "#include <proj_name/proj_name.hpp>\n\nauto main() -> int {\n    return 0;\n}\n"
 
@@ -60,7 +58,7 @@ class AppSourceBuilder(__SourceBuilder):
                 Path("src") / "main.cpp": self._proj_main}
 
 
-class LibSourceBuilder(__SourceBuilder):
+class LibSourceGenerator(__SourceGenerator):
     _PROJ_SRC = "#include <proj_name/proj_name.hpp>\n"
 
     def __init__(self, project_name: str, license_text=None):
@@ -77,8 +75,8 @@ class LibSourceBuilder(__SourceBuilder):
                 Path("src") / self._proj_name / f"{self._proj_name}.cpp": self._proj_src}
 
 
-def make_source_builder(project_type: ProjectType, project_name: str, license_text=None):
+def make_source_generator(project_type: ProjectType, project_name: str, license_text=None):
     if ProjectType.APP == project_type:
-        return AppSourceBuilder(project_name, license_text)
+        return AppSourceGenerator(project_name, license_text)
     if ProjectType.LIB == project_type:
-        return LibSourceBuilder(project_name, license_text)
+        return LibSourceGenerator(project_name, license_text)

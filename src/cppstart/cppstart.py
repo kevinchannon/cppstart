@@ -1,22 +1,22 @@
 import argparse
 from pathlib import Path
 
-from source_builder import *
+from source_generator import *
 from project_type import ProjectType
 from file_writer import FileWriter
 
 
 class CppStart:
-    def __init__(self, source_builder: SourceBuilder, file_writer: FileWriter):
-        self._source_builder = source_builder
+    def __init__(self, source_generator: SourceGenerator, file_writer: FileWriter):
+        self._source_generator = source_generator
         self._file_writer = file_writer
 
     def run(self):
-        self._file_writer.write(self._source_builder.get_content())
+        self._file_writer.write(self._source_generator.get_content())
 
 
 def make_cppstart(args) -> CppStart:
-    return CppStart(make_source_builder(args.project_type, args.proj_name),
+    return CppStart(make_source_generator(args.project_type, args.proj_name),
                     FileWriter(args.output_directory))
 
 
