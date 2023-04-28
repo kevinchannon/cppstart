@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import MagicMock
 
 from src.cppstart.cppstart import *
-from src.cppstart.source_builder import *
 
 
 class ArgParserTests(unittest.TestCase):
