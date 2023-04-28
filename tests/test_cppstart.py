@@ -1,6 +1,8 @@
 import unittest
+from unittest.mock import MagicMock
 
 from src.cppstart.cppstart import *
+from src.cppstart.source_builder import *
 
 
 class ArgParserTests(unittest.TestCase):
@@ -36,6 +38,17 @@ class CppStartTests(unittest.TestCase):
         args = get_command_line_parser().parse_args(["foo", "--app"])
         app = make_cppstart(args)
         self.assertTrue(isinstance(app._source_builder, AppSourceBuilder))
+
+    def test_writes_files(self):
+        src_gen = AppSourceBuilder("foo")
+        src_gen.get_content = MagicMock(return_value={Path("Some/Path"): "some content"})
+        writer = FileWriter(Path("foo"))
+        writer.write = MagicMock()
+
+        cpp_start = CppStart(source_builder=src_gen, file_writer=writer)
+        cpp_start.run()
+
+        writer.write.assert_called_with({Path("Some/Path"): "some content"})
 
 
 if __name__ == '__main__':

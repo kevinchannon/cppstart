@@ -11,6 +11,9 @@ class CppStart:
         self._source_builder = source_builder
         self._file_writer = file_writer
 
+    def run(self):
+        self._file_writer.write(self._source_builder.get_content())
+
 
 def make_cppstart(args) -> CppStart:
     return CppStart(make_source_builder(args.project_type, args.proj_name),
