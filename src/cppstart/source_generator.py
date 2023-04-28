@@ -10,7 +10,7 @@ from project_type import ProjectType
 
 class SourceGenerator(ABC):
     @abstractmethod
-    def get_content(self) -> dict[Path, str]:
+    def run(self) -> dict[Path, str]:
         pass
 
 
@@ -32,7 +32,7 @@ class __SourceGenerator(SourceGenerator):
             self._include = self._INCLUDE
             self._examples_main = self._EXAMPLES_MAIN
 
-    def get_content(self) -> dict[Path, str]:
+    def run(self) -> dict[Path, str]:
         return {Path("include") / self._proj_name / f"{self._proj_name}.hpp": self._include,
                 Path("examples") / "main.cpp": self._examples_main}
 
@@ -51,8 +51,8 @@ class AppSourceGenerator(__SourceGenerator):
             self._proj_src = self._PROJ_SRC
             self._proj_main = self._PROJ_MAIN
 
-    def get_content(self):
-        base_content = super().get_content()
+    def run(self):
+        base_content = super().run()
         return {**base_content,
                 Path("src") / self._proj_name / f"{self._proj_name}.cpp": self._proj_src,
                 Path("src") / "main.cpp": self._proj_main}
@@ -69,8 +69,8 @@ class LibSourceGenerator(__SourceGenerator):
         else:
             self._proj_src = self._PROJ_SRC
 
-    def get_content(self):
-        base_content = super().get_content()
+    def run(self):
+        base_content = super().run()
         return {**base_content,
                 Path("src") / self._proj_name / f"{self._proj_name}.cpp": self._proj_src}
 

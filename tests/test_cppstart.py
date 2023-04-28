@@ -40,7 +40,7 @@ class CppStartTests(unittest.TestCase):
 
     def test_writes_files(self):
         src_gen = AppSourceGenerator("foo")
-        src_gen.get_content = MagicMock(return_value={Path("Some/Path"): "some content"})
+        src_gen.run = MagicMock(return_value={Path("Some/Path"): "some content"})
         writer = FileWriter(Path("foo"))
         writer.write = MagicMock()
 

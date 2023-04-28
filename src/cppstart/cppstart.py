@@ -12,7 +12,7 @@ class CppStart:
         self._file_writer = file_writer
 
     def run(self):
-        self._file_writer.write(self._source_generator.get_content())
+        self._file_writer.write(self._source_generator.run())
 
 
 def make_cppstart(args) -> CppStart:
