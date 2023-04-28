@@ -37,6 +37,7 @@ def get_command_line_parser() -> argparse.ArgumentParser:
 
 def main():
     app = make_cppstart(get_command_line_parser().parse_args())
+    app.run()
 
 
 if __name__ == "__main__":
