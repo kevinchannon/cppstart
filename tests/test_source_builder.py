@@ -52,6 +52,15 @@ class SourceBuilderTests(unittest.TestCase):
         builder = make_source_builder(ProjectType.LIB, "foo")
         self.assertIsInstance(builder, LibSourceBuilder)
 
+    @parameterized.expand([
+        ("App source builder", AppSourceBuilder("foo", "// The license!\n// Another license line.")),
+        ("Lib source builder", LibSourceBuilder("foo", "// The license!\n// Another license line."))
+    ])
+    def test_sources_have_license_at_the_top(self, _, builder):
+        contents = builder.get_content()
+        self.assertEqual(contents[Path("src/foo/foo.cpp")],
+                         "// The license!\n// Another license line.\n\n#include <proj_name/proj_name.hpp>\n")
+
 
 if __name__ == '__main__':
     unittest.main()
