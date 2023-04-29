@@ -1,5 +1,7 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, call
+from datetime import datetime
+from pathlib import Path
 
 from src.cppstart.cppstart import *
 
@@ -45,14 +47,35 @@ class CppStartTests(unittest.TestCase):
         app = make_cppstart(args)
         self.assertTrue(isinstance(app._source_generator, AppSourceGenerator))
 
+    def test_factory_write_the_expected_source_files(self):
+        src_preamble = get_source_code_preamble("MIT", str(datetime.now().year), "Some Name")
+        writer = FileWriter(Path("foo"))
+        writer.write = MagicMock()
+
+        args = get_command_line_parser().parse_args(["foo"])
+        app = make_cppstart(args)
+        app.run(writer)
+
+        write_calls = [
+            call({Path("include/foo/foo.hpp"): f"{src_preamble}\n\n#include <cstdint>\n",
+                  Path(
+                      "examples/main.cpp"): f"{src_preamble}\n\n#include <proj_name/proj_name.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n",
+                  Path("src/foo/foo.cpp"): f"{src_preamble}\n\n#include <proj_name/proj_name.hpp>\n",
+                  Path(
+                      "src/main.cpp"): f"{src_preamble}\n\n#include <proj_name/proj_name.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"}
+                 )
+        ]
+
+        writer.write.assert_has_calls(write_calls)
+
     def test_writes_files(self):
         src_gen = AppSourceGenerator("foo")
         src_gen.run = MagicMock(return_value={Path("Some/Path"): "some content"})
         writer = FileWriter(Path("foo"))
         writer.write = MagicMock()
 
-        cpp_start = CppStart(source_generator=src_gen, file_writer=writer)
-        cpp_start.run()
+        cpp_start = CppStart(source_generator=src_gen)
+        cpp_start.run(writer)
 
         writer.write.assert_called_with({Path("Some/Path"): "some content"})
 

@@ -1,26 +1,31 @@
 import argparse
 from pathlib import Path
+from datetime import datetime
 
 from source_generator import *
 from project_type import ProjectType
 from file_access import FileWriter
-
+from license_generator import *
 
 PKG_DIR_PATH = Path(__file__).absolute().parent
 
 
 class CppStart:
-    def __init__(self, source_generator: SourceGenerator, file_writer: FileWriter):
+    def __init__(self, source_generator: SourceGenerator):
         self._source_generator = source_generator
-        self._file_writer = file_writer
 
-    def run(self):
-        self._file_writer.write(self._source_generator.run())
+    def run(self, file_writer: FileWriter):
+        file_writer.write(self._source_generator.run())
 
 
 def make_cppstart(args) -> CppStart:
-    return CppStart(make_source_generator(args.project_type, args.proj_name),
-                    FileWriter(args.output_directory))
+    license_templates_dir = PKG_DIR_PATH / "templates/licenses"
+    the_license = LicenseGenerator(licences=get_license_paths(license_templates_dir), default="MIT",
+                                   file_reader=FileReader(license_templates_dir)).get(args.license)
+
+    return CppStart(make_source_generator(args.project_type, args.proj_name,
+                                          get_source_code_preamble(the_license.spdx_id, str(datetime.now().year),
+                                                                   "Some Name")))
 
 
 def get_command_line_parser() -> argparse.ArgumentParser:
@@ -41,8 +46,9 @@ def get_command_line_parser() -> argparse.ArgumentParser:
 
 
 def main():
-    app = make_cppstart(get_command_line_parser().parse_args())
-    app.run()
+    args = get_command_line_parser().parse_args()
+    app = make_cppstart(args)
+    app.run(args.output_directory)
 
 
 if __name__ == "__main__":
