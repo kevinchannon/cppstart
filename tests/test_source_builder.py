@@ -61,6 +61,12 @@ class SourceBuilderTests(unittest.TestCase):
         self.assertEqual(contents[Path("src/foo/foo.cpp")],
                          "// The license!\n// Another license line.\n\n#include <proj_name/proj_name.hpp>\n")
 
+    def test_source_preamble_has_correct_spdx_id(self):
+        self.assertTrue("SPDX-License-Identifier: spdx-ID" in get_source_code_preamble("spdx-ID", "", ""))
+
+    def test_source_preamble_has_correct_copyright_year_and_name(self):
+        self.assertTrue("Copyright (c) 2023 Mr. Foo B Baz" in get_source_code_preamble("", str(2023), "Mr. Foo B Baz"))
+
 
 if __name__ == '__main__':
     unittest.main()

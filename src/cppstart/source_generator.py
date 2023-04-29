@@ -80,3 +80,7 @@ def make_source_generator(project_type: ProjectType, project_name: str, license_
         return AppSourceGenerator(project_name, license_text)
     if ProjectType.LIB == project_type:
         return LibSourceGenerator(project_name, license_text)
+
+
+def get_source_code_preamble(spdx_id: str, year: str, copyright_name: str):
+    return f"/*\n* SPDX-License-Identifier: {spdx_id}\n*\n* Copyright (c) {year} {copyright_name}\n*\n*/"
