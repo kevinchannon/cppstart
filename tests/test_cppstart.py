@@ -35,6 +35,12 @@ class ArgParserTests(unittest.TestCase):
     def test_default_license_is_MIT(self):
         self.assertEqual("MIT", get_command_line_parser().parse_args(["foo"]).license)
 
+    def test_copyright_name_is_correct_if_present(self):
+        self.assertEqual("The Copyright Name",
+                         get_command_line_parser().parse_args(["foo", "-c", "The Copyright Name"]).copyright_name)
+        self.assertEqual("The Copyright Name", get_command_line_parser().parse_args(
+            ["foo", "--copyright-name", "The Copyright Name"]).copyright_name)
+
 
 class CppStartTests(unittest.TestCase):
     def test_factory_creates_lib_source_builder_when_args_has_is_lib(self):
