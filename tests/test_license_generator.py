@@ -19,5 +19,18 @@ class LicenseGeneratorFactoryTests(unittest.TestCase):
             licenses = LicenseGeneratorFactory(licences={"MIT": "text"}, default="invalid")
 
 
+class GetLicensePathsTests(unittest.TestCase):
+    def test_gets_all_licenses_in_template_dir(self):
+        license_ids = get_license_paths(Path("../src/cppstart/templates/licenses"))
+        self.assertTrue("AGPL-3.0-or-later" in license_ids)
+        self.assertTrue("Apache-2.0" in license_ids)
+        self.assertTrue("BSL-1.0" in license_ids)
+        self.assertTrue("GPL-3.0-or-later" in license_ids)
+        self.assertTrue("LGPL-3.0-or-later" in license_ids)
+        self.assertTrue("MIT" in license_ids)
+        self.assertTrue("MPL-2.0" in license_ids)
+        self.assertTrue("Unlicense" in license_ids)
+
+
 if __name__ == '__main__':
     unittest.main()

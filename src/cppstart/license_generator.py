@@ -1,4 +1,5 @@
-from abc import ABC, abstractmethod
+from pathlib import Path
+import os
 
 
 class LicenseGeneratorFactoryException(Exception):
@@ -19,3 +20,7 @@ class LicenseGeneratorFactory:
 
     def available_licenses(self):
         return [k for k in self._licenses]
+
+
+def get_license_paths(root_dir: Path) -> list[str]:
+    return [f for f in os.listdir(root_dir) if os.path.isfile(root_dir / f)]
