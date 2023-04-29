@@ -8,6 +8,20 @@ class LicenseGeneratorException(Exception):
     pass
 
 
+class License:
+    def __init__(self, spdx_id: str, text: str):
+        self._spdx_id = spdx_id
+        self._text = text
+
+    @property
+    def spdx_id(self):
+        return self._spdx_id
+
+    @property
+    def text(self):
+        return self._text
+
+
 class LicenseGenerator:
     def __init__(self, licences: list[str], default: str, file_reader: FileReader):
         if default not in licences:
@@ -25,8 +39,8 @@ class LicenseGenerator:
     def available_licenses(self):
         return self._licenses
 
-    def get(self, spdx_id: str) -> str:
-        return self._file_reader.read(Path(spdx_id))
+    def get(self, spdx_id: str) -> License:
+        return License(spdx_id, self._file_reader.read(Path(spdx_id)))
 
 
 def get_license_paths(root_dir: Path) -> list[str]:

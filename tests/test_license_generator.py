@@ -24,9 +24,14 @@ class LicenseGeneratorTests(unittest.TestCase):
             _ = LicenseGenerator(licences=["MIT"], default="invalid", file_reader=self._file_reader)
 
     def test_reads_license_file_from_dir(self):
+        self.assertEqual("MIT",
+                         LicenseGenerator(["MIT", "LGPL3"], "MIT",
+                                          file_reader=self._file_reader).get("MIT").spdx_id)
+        self._file_reader.read.assert_called_with(Path("MIT"))
+
         self.assertEqual("Some license text",
                          LicenseGenerator(["MIT", "LGPL3"], "MIT",
-                                          file_reader=self._file_reader).get("MIT"))
+                                          file_reader=self._file_reader).get("MIT").text)
         self._file_reader.read.assert_called_with(Path("MIT"))
 
 
