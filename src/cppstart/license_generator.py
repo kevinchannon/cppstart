@@ -1,8 +1,15 @@
 from abc import ABC, abstractmethod
 
 
+class LicenseGeneratorFactoryException(Exception):
+    pass
+
+
 class LicenseGeneratorFactory:
     def __init__(self, licences: dict[str, str], default: str):
+        if default not in licences:
+            raise LicenseGeneratorFactoryException(f"'{default}' is not an available license")
+
         self._licenses = licences
         self._default = default
 
