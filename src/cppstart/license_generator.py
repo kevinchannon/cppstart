@@ -1,18 +1,21 @@
 from pathlib import Path
 import os
 
+from file_access import FileReader
 
-class LicenseGeneratorFactoryException(Exception):
+
+class LicenseGeneratorException(Exception):
     pass
 
 
-class LicenseGeneratorFactory:
-    def __init__(self, licences: list[str], default: str):
+class LicenseGenerator:
+    def __init__(self, licences: list[str], default: str, file_reader: FileReader):
         if default not in licences:
-            raise LicenseGeneratorFactoryException(f"'{default}' is not an available license")
+            raise LicenseGeneratorException(f"'{default}' is not an available license")
 
         self._licenses = licences
         self._default = default
+        self._file_reader = file_reader
 
     @property
     def default_license(self):
@@ -21,6 +24,9 @@ class LicenseGeneratorFactory:
     @property
     def available_licenses(self):
         return self._licenses
+
+    def get(self, spdx_id: str) -> str:
+        return self._file_reader.read(Path(spdx_id))
 
 
 def get_license_paths(root_dir: Path) -> list[str]:
