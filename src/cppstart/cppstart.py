@@ -32,7 +32,7 @@ def get_command_line_parser() -> argparse.ArgumentParser:
     proj_types.set_defaults(project_type=ProjectType.APP)
 
     parser.add_argument("-d", "--output-directory", default=".", help="output directory")
-    parser.add_argument("-l", "--license", help="the license that will be used in the project")
+    parser.add_argument("-l", "--license", default="MIT", help="the license that will be used in the project")
 
     return parser
 
