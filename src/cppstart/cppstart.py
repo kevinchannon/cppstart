@@ -3,7 +3,7 @@ from pathlib import Path
 
 from source_generator import *
 from project_type import ProjectType
-from file_writer import FileWriter
+from file_access import FileWriter
 
 
 class CppStart:

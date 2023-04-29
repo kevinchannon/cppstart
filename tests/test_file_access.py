@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 from parameterized import parameterized
 
-from src.cppstart.file_writer import *
+from src.cppstart.file_access import *
 
 
 TEST_DIR = Path("test_files")
@@ -35,10 +35,10 @@ def get_many_files_in_hierarchy() -> dict[Path, str]:
 
 
 class FileWriterTests(unittest.TestCase):
-    def setup(self):
+    def setup(self) -> None:
         os.makedirs(TEST_DIR, exist_ok=True)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         shutil.rmtree(TEST_DIR, ignore_errors=True)
         if os.path.exists("foo.txt"):
             os.remove("foo.txt")
@@ -56,6 +56,20 @@ class FileWriterTests(unittest.TestCase):
             path = root_dir / rel_path
             self.assertTrue(path.exists())
             self.assertEqual(things_to_write[rel_path], path.read_text())
+
+
+class FileReaderTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self._test_path = Path("test_file.txt")
+        with open(self._test_path, "w") as f:
+            print("hello!", file=f, end="")
+
+    def tearDown(self) -> None:
+        os.remove(self._test_path)
+
+    def test_reads_file(self):
+        reader = FileReader()
+        self.assertEqual("hello!", reader.read(self._test_path))
 
 
 if __name__ == '__main__':

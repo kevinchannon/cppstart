@@ -16,3 +16,10 @@ class FileWriter:
             if not path.parent.exists():
                 os.makedirs(path.parent)
             path.write_text(things[rel_path])
+
+
+class FileReader:
+    @staticmethod
+    def read(path: Path):
+        with open(path, "r") as f:
+            return f.read()
