@@ -7,7 +7,7 @@ class LicenseGeneratorFactoryException(Exception):
 
 
 class LicenseGeneratorFactory:
-    def __init__(self, licences: dict[str, str], default: str):
+    def __init__(self, licences: list[str], default: str):
         if default not in licences:
             raise LicenseGeneratorFactoryException(f"'{default}' is not an available license")
 
@@ -18,8 +18,9 @@ class LicenseGeneratorFactory:
     def default_license(self):
         return self._default
 
+    @property
     def available_licenses(self):
-        return [k for k in self._licenses]
+        return self._licenses
 
 
 def get_license_paths(root_dir: Path) -> list[str]:
