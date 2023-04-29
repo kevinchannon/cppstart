@@ -1,13 +1,9 @@
 from abc import ABC, abstractmethod
 
 
-class LicenseGenerator(ABC):
+class LicenseGeneratorFactory:
+    def __init__(self, licences: dict[str, str]):
+        self._licenses = licences
 
-    @abstractmethod
-    def spdx_id(self) -> str:
-        pass
-
-
-class MITLicenseGenerator(LicenseGenerator):
-    def spdx_id(self) -> str:
-        return "MIT"
+    def available_licenses(self):
+        return [k for k in self._licenses]
