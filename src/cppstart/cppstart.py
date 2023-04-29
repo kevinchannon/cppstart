@@ -23,7 +23,6 @@ def make_cppstart(args) -> CppStart:
 def get_command_line_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("proj_name", help="name of the project")
-    parser.add_argument("-d", "--output-directory", default=".", help="output directory")
 
     proj_types = parser.add_mutually_exclusive_group()
     proj_types.add_argument("-A", "--app", action="store_const", dest="project_type", const=ProjectType.APP,
@@ -31,6 +30,9 @@ def get_command_line_parser() -> argparse.ArgumentParser:
     proj_types.add_argument("-L", "--lib", action="store_const", dest="project_type", const=ProjectType.LIB,
                             help="create a library project")
     proj_types.set_defaults(project_type=ProjectType.APP)
+
+    parser.add_argument("-d", "--output-directory", default=".", help="output directory")
+    parser.add_argument("-l", "--license", help="the license that will be used in the project")
 
     return parser
 

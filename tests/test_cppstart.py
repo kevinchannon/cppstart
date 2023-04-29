@@ -26,6 +26,10 @@ class ArgParserTests(unittest.TestCase):
     def test_default_project_type_is_app(self):
         self.assertEqual(ProjectType.APP, get_command_line_parser().parse_args(["foo"]).project_type)
 
+    def test_license_is_set_when_present(self):
+        self.assertEqual("MIT", get_command_line_parser().parse_args(["foo", "-l", "MIT"]).license)
+        self.assertEqual("MIT", get_command_line_parser().parse_args(["foo", "--license=MIT"]).license)
+
 
 class CppStartTests(unittest.TestCase):
     def test_factory_creates_lib_source_builder_when_args_has_is_lib(self):
