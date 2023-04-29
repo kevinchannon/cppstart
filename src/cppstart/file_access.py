@@ -19,7 +19,11 @@ class FileWriter:
 
 
 class FileReader:
-    @staticmethod
-    def read(path: Path):
-        with open(path, "r") as f:
+    def __init__(self, root_dir=None):
+        assert isinstance(root_dir, Path) or root_dir is None
+
+        self._root_dir = root_dir if root_dir is not None else Path(".")
+
+    def read(self, path: Path):
+        with open(self._root_dir / path, "r") as f:
             return f.read()

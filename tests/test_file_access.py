@@ -64,12 +64,21 @@ class FileReaderTests(unittest.TestCase):
         with open(self._test_path, "w") as f:
             print("hello!", file=f, end="")
 
+        os.makedirs(TEST_DIR, exist_ok=True)
+        with open(TEST_DIR / self._test_path, "w") as f:
+            print("hello, sub-dir!", file=f, end="")
+
     def tearDown(self) -> None:
         os.remove(self._test_path)
+        shutil.rmtree(TEST_DIR, ignore_errors=True)
 
     def test_reads_file(self):
         reader = FileReader()
         self.assertEqual("hello!", reader.read(self._test_path))
+
+    def test_reads_files_in_root_directory(self):
+        reader = FileReader(TEST_DIR)
+        self.assertEqual("hello, sub-dir!", reader.read(self._test_path))
 
 
 if __name__ == '__main__':
