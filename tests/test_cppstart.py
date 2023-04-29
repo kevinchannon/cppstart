@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock, call
 from datetime import datetime
 from pathlib import Path
+import configparser
 
 from src.cppstart.cppstart import *
 
@@ -43,14 +44,15 @@ class ArgParserTests(unittest.TestCase):
 
 
 class CppStartTests(unittest.TestCase):
+
     def test_factory_creates_lib_source_builder_when_args_has_is_lib(self):
         args = get_command_line_parser().parse_args(["foo", "--lib"])
-        app = make_cppstart(args)
+        app = make_cppstart(args, None)
         self.assertTrue(isinstance(app._source_generator, LibSourceGenerator))
 
     def test_factory_creates_app_source_builder_when_args_has_is_app(self):
         args = get_command_line_parser().parse_args(["foo", "--app"])
-        app = make_cppstart(args)
+        app = make_cppstart(args, None)
         self.assertTrue(isinstance(app._source_generator, AppSourceGenerator))
 
     def test_factory_write_the_expected_source_files(self):
@@ -59,7 +61,7 @@ class CppStartTests(unittest.TestCase):
         writer.write = MagicMock()
 
         args = get_command_line_parser().parse_args(["foo", "-c", "Some Name"])
-        app = make_cppstart(args)
+        app = make_cppstart(args, None)
         app.run(writer)
 
         write_calls = [
@@ -87,11 +89,20 @@ class CppStartTests(unittest.TestCase):
 
 
 class CopyrightNameTests(unittest.TestCase):
-    def test_returns_value_from_args(self):
-        class FakeArgs:
-            copyright_name = "Foo B Baz"
+    class FakeArgs:
+        copyright_name = "Foo B Baz"
 
-        self.assertEqual("Foo B Baz", get_copyright_name(FakeArgs()))
+    def test_returns_value_from_args(self):
+        self.assertEqual("Foo B Baz", get_copyright_name(CopyrightNameTests.FakeArgs(), configparser.ConfigParser()))
+
+    @unittest.skip("Need to implement Config first")
+    def test_gets_name_from_config_if_not_in_args(self):
+        args = CopyrightNameTests.FakeArgs()
+        args.copyright_name = None
+
+        config = configparser.ConfigParser()
+        config["user"] = {"copyright_name": "Name from config"}
+        self.assertEqual("Name from config", get_copyright_name(args, config))
 
 
 if __name__ == '__main__':

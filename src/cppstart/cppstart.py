@@ -1,6 +1,8 @@
 import argparse
+import configparser
 from pathlib import Path
 from datetime import datetime
+import appdirs
 
 from source_generator import *
 from project_type import ProjectType
@@ -18,11 +20,11 @@ class CppStart:
         file_writer.write(self._source_generator.run())
 
 
-def make_cppstart(args) -> CppStart:
+def make_cppstart(args, config) -> CppStart:
     return CppStart(make_source_generator(args.project_type, args.proj_name,
                                           get_source_code_preamble(spdx_id=get_license(args).spdx_id,
                                                                    year=str(datetime.now().year),
-                                                                   copyright_name=get_copyright_name(args))))
+                                                                   copyright_name=get_copyright_name(args, config))))
 
 
 def get_license(args) -> License:
@@ -31,7 +33,7 @@ def get_license(args) -> License:
                             file_reader=FileReader(license_templates_dir)).get(args.license)
 
 
-def get_copyright_name(args) -> str:
+def get_copyright_name(args, config) -> str:
     return args.copyright_name
 
 
@@ -53,9 +55,15 @@ def get_command_line_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def get_config(file_reader: FileReader) -> configparser.ConfigParser:
+    config = configparser.ConfigParser()
+    config.read_string(config_str)
+    return config
+
+
 def main():
     args = get_command_line_parser().parse_args()
-    app = make_cppstart(args)
+    app = make_cppstart(args, get_config(Path(appdirs.user_config_dir(appname="cppstart", appauthor=False))))
     app.run(args.output_directory)
 
 
