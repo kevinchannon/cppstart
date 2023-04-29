@@ -19,13 +19,20 @@ class CppStart:
 
 
 def make_cppstart(args) -> CppStart:
-    license_templates_dir = PKG_DIR_PATH / "templates/licenses"
-    the_license = LicenseGenerator(licences=get_license_paths(license_templates_dir), default="MIT",
-                                   file_reader=FileReader(license_templates_dir)).get(args.license)
-
     return CppStart(make_source_generator(args.project_type, args.proj_name,
-                                          get_source_code_preamble(the_license.spdx_id, str(datetime.now().year),
-                                                                   "Some Name")))
+                                          get_source_code_preamble(spdx_id=get_license(args).spdx_id,
+                                                                   year=str(datetime.now().year),
+                                                                   copyright_name=get_copyright_name(args))))
+
+
+def get_license(args) -> License:
+    license_templates_dir = PKG_DIR_PATH / "templates/licenses"
+    return LicenseGenerator(licences=get_license_paths(license_templates_dir), default="MIT",
+                            file_reader=FileReader(license_templates_dir)).get(args.license)
+
+
+def get_copyright_name(args) -> str:
+    return args.copyright_name
 
 
 def get_command_line_parser() -> argparse.ArgumentParser:

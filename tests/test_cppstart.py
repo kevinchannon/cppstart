@@ -58,7 +58,7 @@ class CppStartTests(unittest.TestCase):
         writer = FileWriter(Path("foo"))
         writer.write = MagicMock()
 
-        args = get_command_line_parser().parse_args(["foo"])
+        args = get_command_line_parser().parse_args(["foo", "-c", "Some Name"])
         app = make_cppstart(args)
         app.run(writer)
 
@@ -84,6 +84,14 @@ class CppStartTests(unittest.TestCase):
         cpp_start.run(writer)
 
         writer.write.assert_called_with({Path("Some/Path"): "some content"})
+
+
+class CopyrightNameTests(unittest.TestCase):
+    def test_returns_value_from_args(self):
+        class FakeArgs:
+            copyright_name = "Foo B Baz"
+
+        self.assertEqual("Foo B Baz", get_copyright_name(FakeArgs()))
 
 
 if __name__ == '__main__':
