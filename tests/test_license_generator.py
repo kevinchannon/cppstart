@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from src.cppstart.license_generator import *
+from src.cppstart.cppstart import PKG_DIR_PATH
 
 
 class LicenseGeneratorTests(unittest.TestCase):
@@ -37,7 +38,7 @@ class LicenseGeneratorTests(unittest.TestCase):
 
 class GetLicensePathsTests(unittest.TestCase):
     def test_gets_all_licenses_in_template_dir(self):
-        license_ids = get_license_paths(Path("../src/cppstart/templates/licenses"))
+        license_ids = get_license_paths(PKG_DIR_PATH / "templates/licenses")
         self.assertTrue("AGPL-3.0-or-later" in license_ids)
         self.assertTrue("Apache-2.0" in license_ids)
         self.assertTrue("BSL-1.0" in license_ids)

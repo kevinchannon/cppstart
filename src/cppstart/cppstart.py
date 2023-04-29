@@ -6,6 +6,9 @@ from project_type import ProjectType
 from file_access import FileWriter
 
 
+PKG_DIR_PATH = Path(__file__).absolute().parent
+
+
 class CppStart:
     def __init__(self, source_generator: SourceGenerator, file_writer: FileWriter):
         self._source_generator = source_generator
