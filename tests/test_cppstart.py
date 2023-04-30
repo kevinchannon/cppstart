@@ -10,37 +10,37 @@ from src.cppstart.file_access import FileReadWriter
 
 class ArgParserTests(unittest.TestCase):
     def test_first_positional_argument_is_project_name(self):
-        self.assertEqual("foo", get_command_line_parser().parse_args(["foo"]).proj_name)
+        self.assertEqual("foo", get_command_line_parser([]).parse_args(["foo"]).proj_name)
 
     def test_output_directory_is_set_when_present(self):
-        self.assertEqual("bar", get_command_line_parser().parse_args(["foo", "-d", "bar"]).output_directory)
+        self.assertEqual("bar", get_command_line_parser([]).parse_args(["foo", "-d", "bar"]).output_directory)
         self.assertEqual("bar",
-                         get_command_line_parser().parse_args(["foo", "--output-directory", "bar"]).output_directory)
+                         get_command_line_parser([]).parse_args(["foo", "--output-directory", "bar"]).output_directory)
 
     def test_output_directory_is_set_to_dot_when_absent(self):
-        self.assertEqual(".", get_command_line_parser().parse_args(["foo"]).output_directory)
+        self.assertEqual(".", get_command_line_parser([]).parse_args(["foo"]).output_directory)
 
     def test_project_type_is_set_correctly(self):
-        self.assertEqual(ProjectType.LIB, get_command_line_parser().parse_args(["foo", "--lib"]).project_type)
-        self.assertEqual(ProjectType.LIB, get_command_line_parser().parse_args(["foo", "-L"]).project_type)
+        self.assertEqual(ProjectType.LIB, get_command_line_parser([]).parse_args(["foo", "--lib"]).project_type)
+        self.assertEqual(ProjectType.LIB, get_command_line_parser([]).parse_args(["foo", "-L"]).project_type)
 
-        self.assertEqual(ProjectType.APP, get_command_line_parser().parse_args(["foo", "--app"]).project_type)
-        self.assertEqual(ProjectType.APP, get_command_line_parser().parse_args(["foo", "-A"]).project_type)
+        self.assertEqual(ProjectType.APP, get_command_line_parser([]).parse_args(["foo", "--app"]).project_type)
+        self.assertEqual(ProjectType.APP, get_command_line_parser([]).parse_args(["foo", "-A"]).project_type)
 
     def test_default_project_type_is_app(self):
-        self.assertEqual(ProjectType.APP, get_command_line_parser().parse_args(["foo"]).project_type)
+        self.assertEqual(ProjectType.APP, get_command_line_parser([]).parse_args(["foo"]).project_type)
 
     def test_license_is_set_when_present(self):
-        self.assertEqual("MIT", get_command_line_parser().parse_args(["foo", "-l", "MIT"]).license)
-        self.assertEqual("MIT", get_command_line_parser().parse_args(["foo", "--license=MIT"]).license)
+        self.assertEqual("MIT", get_command_line_parser(["MIT"]).parse_args(["foo", "-l", "MIT"]).license)
+        self.assertEqual("MIT", get_command_line_parser(["MIT"]).parse_args(["foo", "--license=MIT"]).license)
 
     def test_default_license_is_MIT(self):
-        self.assertEqual("MIT", get_command_line_parser().parse_args(["foo"]).license)
+        self.assertEqual("MIT", get_command_line_parser(["MIT"]).parse_args(["foo"]).license)
 
     def test_copyright_name_is_correct_if_present(self):
         self.assertEqual("The Copyright Name",
-                         get_command_line_parser().parse_args(["foo", "-c", "The Copyright Name"]).copyright_name)
-        self.assertEqual("The Copyright Name", get_command_line_parser().parse_args(
+                         get_command_line_parser([]).parse_args(["foo", "-c", "The Copyright Name"]).copyright_name)
+        self.assertEqual("The Copyright Name", get_command_line_parser([]).parse_args(
             ["foo", "--copyright-name", "The Copyright Name"]).copyright_name)
 
 
@@ -48,12 +48,12 @@ class CppStartTests(unittest.TestCase):
     _empty_config = Config(Path(), FileReadWriter(Path()))
 
     def test_factory_creates_lib_source_builder_when_args_has_is_lib(self):
-        args = get_command_line_parser().parse_args(["foo", "--lib"])
+        args = get_command_line_parser([]).parse_args(["foo", "--lib"])
         app = make_cppstart(args, self._empty_config)
         self.assertTrue(isinstance(app._source_generator, LibSourceGenerator))
 
     def test_factory_creates_app_source_builder_when_args_has_is_app(self):
-        args = get_command_line_parser().parse_args(["foo", "--app"])
+        args = get_command_line_parser([]).parse_args(["foo", "--app"])
         app = make_cppstart(args, self._empty_config)
         self.assertTrue(isinstance(app._source_generator, AppSourceGenerator))
 
@@ -62,7 +62,7 @@ class CppStartTests(unittest.TestCase):
         writer = FileReadWriter(Path("foo"))
         writer.write = MagicMock()
 
-        args = get_command_line_parser().parse_args(["foo", "-c", "Some Name"])
+        args = get_command_line_parser([]).parse_args(["foo", "-c", "Some Name"])
         app = make_cppstart(args, self._empty_config)
         app.run(writer)
 

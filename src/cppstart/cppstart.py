@@ -11,6 +11,7 @@ from license_generator import *
 from config import Config
 
 PKG_DIR_PATH = Path(__file__).absolute().parent
+LICENSE_TEMPLATES_DIR = PKG_DIR_PATH / "templates/licenses"
 
 
 class CppStart:
@@ -29,9 +30,8 @@ def make_cppstart(args, config: Config) -> CppStart:
 
 
 def get_license(args) -> License:
-    license_templates_dir = PKG_DIR_PATH / "templates/licenses"
-    return LicenseGenerator(licences=get_license_paths(license_templates_dir), default="MIT",
-                            file_reader=FileReader(license_templates_dir)).get(args.license)
+    return LicenseGenerator(licences=get_license_paths(LICENSE_TEMPLATES_DIR), default="MIT",
+                            file_reader=FileReader(LICENSE_TEMPLATES_DIR)).get(args.license)
 
 
 def get_copyright_name(args, config: Config) -> str:
@@ -44,7 +44,7 @@ def get_copyright_name(args, config: Config) -> str:
     return ""
 
 
-def get_command_line_parser() -> argparse.ArgumentParser:
+def get_command_line_parser(available_licenses: list[str]) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("proj_name", help="name of the project")
 
@@ -56,7 +56,7 @@ def get_command_line_parser() -> argparse.ArgumentParser:
     proj_types.set_defaults(project_type=ProjectType.APP)
 
     parser.add_argument("-d", "--output-directory", default=".", help="output directory")
-    parser.add_argument("-l", "--license", default="MIT", help="the license that will be used in the project")
+    parser.add_argument("-l", "--license", choices=available_licenses, default="MIT", help="the license that will be used in the project")
     parser.add_argument("-c", "--copyright-name", help="name that will be used in copyright info")
 
     return parser
@@ -69,7 +69,7 @@ def get_config(file_access: FileReadWriter) -> Config:
 
 
 def main():
-    args = get_command_line_parser().parse_args()
+    args = get_command_line_parser(get_license_paths(LICENSE_TEMPLATES_DIR)).parse_args()
     app = make_cppstart(args,
                         get_config(FileReadWriter(Path(appdirs.user_config_dir(appname="cppstart", appauthor=False)))))
     app.run(args.output_directory)
