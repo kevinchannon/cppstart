@@ -41,7 +41,8 @@ def get_copyright_name(args, config: Config) -> str:
     if config.has("user", "copyright_name"):
         return config.get("user", "copyright_name")
 
-    return ""
+    new_copyright_name = input("No user config. Enter your name (i.e. 'Stan Smith')\n>")
+    return new_copyright_name
 
 
 def get_command_line_parser(available_licenses: list[str]) -> argparse.ArgumentParser:
