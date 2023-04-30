@@ -45,3 +45,13 @@ class Config:
             self._parser.set(section, f"{item}@float", str(value))
         else:
             self._parser.set(section, f"{item}@str", str(value))
+
+    def has(self, section: str, item: str) -> bool:
+        types = ["str", "int", "float", "bool"]
+
+        for t in types:
+            typed_item = f"{item}@{t}"
+            if self._parser.has_option(section, typed_item):
+                return True
+
+        return False

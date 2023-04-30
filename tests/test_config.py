@@ -81,6 +81,25 @@ class ConfigTests(unittest.TestCase):
 
         self.assertEqual(value, config.get("section1", "setting1"))
 
+    @parameterized.expand([
+        ("str", "Person 123"),
+        ("int", 12345),
+        ("float", 3.14152),
+        ("bool", False),
+        ("bool", True)
+    ])
+    def test_has_returns_true_if_the_value_is_present(self, _, value):
+        config = Config(Path("cfg.ini"), self._file_access)
+        config.set("section1", "setting1", value)
+
+        self.assertTrue(config.has("section1", "setting1"))
+
+    def test_has_returns_false_if_the_value_is_not_present(self):
+        config = Config(Path("cfg.ini"), self._file_access)
+        config.set("section1", "setting1", 1000)
+
+        self.assertFalse(config.has("section1", "setting2"))
+
 
 if __name__ == '__main__':
     unittest.main()
