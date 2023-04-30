@@ -42,6 +42,9 @@ def get_copyright_name(args, config: Config) -> str:
         return config.get("user", "copyright_name")
 
     new_copyright_name = input("No user config. Enter your name (i.e. 'Stan Smith')\n>")
+    config.set("user", "copyright_name", new_copyright_name)
+    config.save()
+
     return new_copyright_name
 
 

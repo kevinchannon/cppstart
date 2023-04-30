@@ -118,6 +118,20 @@ class CopyrightNameTests(unittest.TestCase):
 
         self.assertEqual("New User Name", get_copyright_name(args, config))
 
+    @patch("src.cppstart.cppstart.input", create=True)
+    def test_writes_user_provided_copyright_name_to_config_if_not_in_args_or_config(self, fake_input_fn):
+        fake_input_fn.side_effect = ["New User Name"]
+        args = CopyrightNameTests.FakeArgs(None)
+        file_access = FileReadWriter(Path())
+        file_access.write = MagicMock()
+        config = Config(Path("config.ini"), file_access)
+
+        _ = get_copyright_name(args, config)
+
+        self.assertTrue(config.has("user", "copyright_name"))
+        self.assertEqual("New User Name", config.get("user", "copyright_name"))
+        file_access.write.assert_called_with({Path("config.ini"): "[user]\ncopyright_name@str = New User Name\n\n"})
+
 
 if __name__ == '__main__':
     unittest.main()
