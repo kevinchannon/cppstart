@@ -38,7 +38,10 @@ def get_copyright_name(args, config: Config) -> str:
     if args.copyright_name is not None:
         return args.copyright_name
 
-    return config.get("user", "copyright_name")
+    if config.has("user", "copyright_name"):
+        return config.get("user", "copyright_name")
+
+    return ""
 
 
 def get_command_line_parser() -> argparse.ArgumentParser:

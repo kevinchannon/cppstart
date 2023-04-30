@@ -109,6 +109,18 @@ class CopyrightNameTests(unittest.TestCase):
 
         self.assertEqual("Name from config", get_copyright_name(args, config))
 
+    def test_returns_an_empty_string_if_not_in_args_or_config(self):
+        args = CopyrightNameTests.FakeArgs()
+        args.copyright_name = None
+
+        file_access = FileReadWriter(Path())
+        file_access.read = MagicMock(return_value="[user]\nnot_a_name@str = no name")
+
+        config = Config(Path("config.ini"), file_access)
+        config.load()
+
+        self.assertEqual("", get_copyright_name(args, config))
+
 
 if __name__ == '__main__':
     unittest.main()
