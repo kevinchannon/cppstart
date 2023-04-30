@@ -49,7 +49,7 @@ class FileWriterTests(unittest.TestCase):
         ("multiple files in multiple nested directories", TEST_DIR, get_many_files_in_hierarchy())
     ])
     def test_writes_contents_to_files(self, _, root_dir: Path, things_to_write: dict[Path, str]):
-        writer = FileWriter(root_dir)
+        writer = FileReadWriter(root_dir)
         writer.write(things_to_write)
 
         for rel_path in things_to_write:

@@ -1,17 +1,26 @@
 import configparser
 from pathlib import Path
+from io import StringIO
 
-from file_access import FileReader
+from file_access import FileReadWriter
 
 
 class Config:
-    def __init__(self, file_reader: FileReader):
+    def __init__(self, filename: Path, file_access: FileReadWriter):
         self._parser = configparser.ConfigParser()
-        self._file_reader = file_reader
+        self._filename = filename
+        self._file_access = file_access
 
-    def read(self, path: Path):
-        config_str = self._file_reader.read(path)
+    def load(self):
+        config_str = self._file_access.read(self._filename)
         self._parser.read_string(config_str)
+
+    def save(self):
+        with StringIO() as cfg_str:
+            self._parser.write(cfg_str)
+            cfg_str.seek(0)
+
+            self._file_access.write({self._filename: cfg_str.read()})
 
     def get(self, section: str, item: str):
         getters = {"str": self._parser.get,

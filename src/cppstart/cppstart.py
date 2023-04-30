@@ -6,7 +6,7 @@ import appdirs
 
 from source_generator import *
 from project_type import ProjectType
-from file_access import FileWriter
+from file_access import FileReadWriter
 from license_generator import *
 
 PKG_DIR_PATH = Path(__file__).absolute().parent
@@ -16,7 +16,7 @@ class CppStart:
     def __init__(self, source_generator: SourceGenerator):
         self._source_generator = source_generator
 
-    def run(self, file_writer: FileWriter):
+    def run(self, file_writer: FileReadWriter):
         file_writer.write(self._source_generator.run())
 
 

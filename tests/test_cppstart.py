@@ -57,7 +57,7 @@ class CppStartTests(unittest.TestCase):
 
     def test_factory_write_the_expected_source_files(self):
         src_preamble = get_source_code_preamble("MIT", str(datetime.now().year), "Some Name")
-        writer = FileWriter(Path("foo"))
+        writer = FileReadWriter(Path("foo"))
         writer.write = MagicMock()
 
         args = get_command_line_parser().parse_args(["foo", "-c", "Some Name"])
@@ -79,7 +79,7 @@ class CppStartTests(unittest.TestCase):
     def test_writes_files(self):
         src_gen = AppSourceGenerator("foo")
         src_gen.run = MagicMock(return_value={Path("Some/Path"): "some content"})
-        writer = FileWriter(Path("foo"))
+        writer = FileReadWriter(Path("foo"))
         writer.write = MagicMock()
 
         cpp_start = CppStart(source_generator=src_gen)
