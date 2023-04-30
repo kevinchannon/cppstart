@@ -100,6 +100,12 @@ class ConfigTests(unittest.TestCase):
 
         self.assertFalse(config.has("section1", "setting2"))
 
+    def test_has_returns_false_if_the_section_is_not_present(self):
+        config = Config(Path("cfg.ini"), self._file_access)
+        config.set("section1", "setting1", 1000)
+
+        self.assertFalse(config.has("section2", "setting1"))
+
 
 if __name__ == '__main__':
     unittest.main()
