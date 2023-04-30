@@ -17,7 +17,7 @@ class SourceGenerator(ABC):
 class __SourceGenerator(SourceGenerator):
     _LICENSED_SOURCE = "{}\n\n{}"
     _INCLUDE = """#include <cstdint>\n"""
-    _EXAMPLES_MAIN = "#include <proj_name/proj_name.hpp>\n\nauto main() -> int {\n    return 0;\n}\n"
+    _EXAMPLES_MAIN = "#include <{0}/{0}.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"
 
     def __init__(self, project_name: str, license_text):
         assert isinstance(license_text, str) or license_text is None
@@ -27,10 +27,11 @@ class __SourceGenerator(SourceGenerator):
 
         if self._license_text is not None:
             self._include = self._LICENSED_SOURCE.format(self._license_text, self._INCLUDE)
-            self._examples_main = self._LICENSED_SOURCE.format(self._license_text, self._EXAMPLES_MAIN)
+            self._examples_main = self._LICENSED_SOURCE.format(self._license_text,
+                                                               self._EXAMPLES_MAIN.format(self._proj_name))
         else:
             self._include = self._INCLUDE
-            self._examples_main = self._EXAMPLES_MAIN
+            self._examples_main = self._EXAMPLES_MAIN.format(self._proj_name)
 
     def run(self) -> dict[Path, str]:
         return {Path("include") / self._proj_name / f"{self._proj_name}.hpp": self._include,
@@ -38,18 +39,18 @@ class __SourceGenerator(SourceGenerator):
 
 
 class AppSourceGenerator(__SourceGenerator):
-    _PROJ_SRC = "#include <proj_name/proj_name.hpp>\n"
-    _PROJ_MAIN = "#include <proj_name/proj_name.hpp>\n\nauto main() -> int {\n    return 0;\n}\n"
-
     def __init__(self, project_name: str, license_text=None):
         super().__init__(project_name, license_text)
 
+        proj_src = "#include <{0}/{0}.hpp>\n".format(self._proj_name)
+        proj_main = "#include <{0}/{0}.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n".format(self._proj_name)
+
         if self._license_text is not None:
-            self._proj_src = self._LICENSED_SOURCE.format(self._license_text, self._PROJ_SRC)
-            self._proj_main = self._LICENSED_SOURCE.format(self._license_text, self._PROJ_MAIN)
+            self._proj_src = self._LICENSED_SOURCE.format(self._license_text, proj_src)
+            self._proj_main = self._LICENSED_SOURCE.format(self._license_text, proj_main)
         else:
-            self._proj_src = self._PROJ_SRC
-            self._proj_main = self._PROJ_MAIN
+            self._proj_src = proj_src
+            self._proj_main = proj_main
 
     def run(self):
         base_content = super().run()
@@ -59,15 +60,15 @@ class AppSourceGenerator(__SourceGenerator):
 
 
 class LibSourceGenerator(__SourceGenerator):
-    _PROJ_SRC = "#include <proj_name/proj_name.hpp>\n"
-
     def __init__(self, project_name: str, license_text=None):
         super().__init__(project_name, license_text)
 
+        proj_src = "#include <{}/{}.hpp>\n".format(self._proj_name, self._proj_name)
+
         if self._license_text is not None:
-            self._proj_src = self._LICENSED_SOURCE.format(self._license_text, self._PROJ_SRC)
+            self._proj_src = self._LICENSED_SOURCE.format(self._license_text, proj_src)
         else:
-            self._proj_src = self._PROJ_SRC
+            self._proj_src = proj_src
 
     def run(self):
         base_content = super().run()

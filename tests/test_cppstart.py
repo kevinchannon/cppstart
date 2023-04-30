@@ -69,10 +69,10 @@ class CppStartTests(unittest.TestCase):
         write_calls = [
             call({Path("include/foo/foo.hpp"): f"{src_preamble}\n\n#include <cstdint>\n",
                   Path(
-                      "examples/main.cpp"): f"{src_preamble}\n\n#include <proj_name/proj_name.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n",
-                  Path("src/foo/foo.cpp"): f"{src_preamble}\n\n#include <proj_name/proj_name.hpp>\n",
+                      "examples/main.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n",
+                  Path("src/foo/foo.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n",
                   Path(
-                      "src/main.cpp"): f"{src_preamble}\n\n#include <proj_name/proj_name.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"}
+                      "src/main.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"}
                  )
         ]
 
