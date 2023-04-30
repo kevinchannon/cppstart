@@ -15,3 +15,9 @@ class Config:
 
     def get(self, section: str, item: str):
         return self._parser.get(section, item)
+
+    def set(self, section: str, item: str, value):
+        if not self._parser.has_section(section):
+            self._parser.add_section(section)
+
+        self._parser.set(section, item, str(value))
