@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, call, patch
 from datetime import datetime
 from pathlib import Path
 
-from src.cppstart.cppstart import *
+from src.cppstart.cpp_start import *
 from src.cppstart.config import Config
 from src.cppstart.file_access import FileReadWriter
 
@@ -104,33 +104,34 @@ class CopyrightNameTests(unittest.TestCase):
         file_access = FileReadWriter(Path())
         file_access.read = MagicMock(return_value="[user]\ncopyright_name@str = Name from config")
 
-        config = Config(Path("config.ini"), file_access)
+        config = Config(Path("config2.ini"), file_access)
         config.load()
 
         self.assertEqual("Name from config", get_copyright_name(args, config))
 
-    @patch("src.cppstart.cppstart.input", create=True)
+    @patch("src.cppstart.cpp_start.input", create=True)
     def test_asks_for_copyright_name_if_not_in_args_or_config(self, fake_input_fn):
         fake_input_fn.side_effect = ["New User Name"]
         args = CopyrightNameTests.FakeArgs(None)
         file_access = FileReadWriter(Path())
-        config = Config(Path("config.ini"), file_access)
+        file_access.write = MagicMock()
+        config = Config(Path("config3.ini"), file_access)
 
         self.assertEqual("New User Name", get_copyright_name(args, config))
 
-    @patch("src.cppstart.cppstart.input", create=True)
+    @patch("src.cppstart.cpp_start.input", create=True)
     def test_writes_user_provided_copyright_name_to_config_if_not_in_args_or_config(self, fake_input_fn):
         fake_input_fn.side_effect = ["New User Name"]
         args = CopyrightNameTests.FakeArgs(None)
         file_access = FileReadWriter(Path())
         file_access.write = MagicMock()
-        config = Config(Path("config.ini"), file_access)
+        config = Config(Path("config4.ini"), file_access)
 
         _ = get_copyright_name(args, config)
 
         self.assertTrue(config.has("user", "copyright_name"))
         self.assertEqual("New User Name", config.get("user", "copyright_name"))
-        file_access.write.assert_called_with({Path("config.ini"): "[user]\ncopyright_name@str = New User Name\n\n"})
+        file_access.write.assert_called_with({Path("config4.ini"): "[user]\ncopyright_name@str = New User Name\n\n"})
 
 
 if __name__ == '__main__':

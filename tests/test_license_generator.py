@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from src.cppstart.license_generator import *
-from src.cppstart.cppstart import LICENSE_TEMPLATES_DIR
+from src.cppstart.cpp_start import LICENSE_TEMPLATES_DIR
 
 
 class LicenseGeneratorTests(unittest.TestCase):
