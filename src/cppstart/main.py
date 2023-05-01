@@ -36,25 +36,11 @@ def rename_all_the_things(root_dir: str, proj_name: str):
                 os.rename(dir_path, new_dir_path)
 
 
-def license_choices(pkg_dir_path: str):
-    license_dir_path = os.path.join(pkg_dir_path, "templates", "licenses")
-    return [f for f in os.listdir(license_dir_path) if os.path.isfile(os.path.join(license_dir_path, f))]
-
-
 def copy_license_file(new_license: str, root_dir: Path, pkg_dir: Path):
     license_path = pkg_dir / "templates" / "licenses" / new_license
     shutil.copy(license_path, root_dir)
     os.remove(root_dir / "LICENSE")
     os.rename(root_dir / new_license, root_dir / "LICENSE")
-
-
-def update_file_license_info(new_license: str, root_dir: Path):
-    replace_in_files(root_dir, "* SPDX-License-Identifier:", "* SPDX-License-Identifier: " + new_license)
-
-
-def update_copyright(copyright_name: str, root_dir: Path):
-    replace_in_files(root_dir, "Copyright (c) [year] [fullname]",
-                     f"Copyright (c) {datetime.now().year} {copyright_name}")
 
 
 def replace_in_files(root_dir: Path, old_text: str, new_text: str):
@@ -67,15 +53,6 @@ def replace_in_files(root_dir: Path, old_text: str, new_text: str):
 
             with open(os.path.join(root, file), 'w') as f:
                 f.write(new_contents)
-
-
-def update_license(new_license: str, root_dir: Path, pkg_dir: Path):
-    copy_license_file(new_license, root_dir, pkg_dir)
-    update_file_license_info(new_license, root_dir)
-
-
-def ask_for_users_name():
-    return input("No user config. Enter your name (i.e. 'Stan Smith')\n>")
 
 
 def initialise_git(dest_dir: Path):
@@ -113,8 +90,7 @@ def main():
     os.chmod(dest_dir / "init.sh", 0o755)
     os.chmod(dest_dir / "build.sh", 0o755)
 
-    update_license(args.license, dest_dir, cpp_start.PKG_DIR_PATH)
-    update_copyright(config.get("user", "copyright_name"), dest_dir)
+    copy_license_file(args.license, dest_dir, cpp_start.PKG_DIR_PATH)
 
     app.run(file_access.FileReadWriter(Path(args.output_directory)))
 
