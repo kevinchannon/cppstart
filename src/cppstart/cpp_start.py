@@ -74,13 +74,3 @@ def get_config(file_access: FileReadWriter) -> Config:
         config.load()
 
     return config
-
-
-def main():
-    args = get_command_line_parser(get_license_paths(LICENSE_TEMPLATES_DIR)).parse_args()
-    app = make_cppstart(args, get_config(FileReadWriter(CONFIG_DIR)))
-    app.run(FileReadWriter(args.output_directory))
-
-
-if __name__ == "__main__":
-    main()
