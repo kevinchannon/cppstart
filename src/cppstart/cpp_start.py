@@ -70,7 +70,9 @@ def get_command_line_parser(available_licenses: list[str]) -> argparse.ArgumentP
 
 def get_config(file_access: FileReadWriter) -> Config:
     config = Config(Path("config.ini"), file_access)
-    config.load()
+    if file_access.exists(Path("config.ini")):
+        config.load()
+
     return config
 
 

@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 import shutil
 from parameterized import parameterized
@@ -79,6 +80,11 @@ class FileReaderTests(unittest.TestCase):
     def test_reads_files_in_root_directory(self):
         reader = FileReader(TEST_DIR)
         self.assertEqual("hello, sub-dir!", reader.read(self._test_path))
+
+    def test_exists_returns_false_if_path_doesnt_exist(self):
+        reader = FileReader(Path())
+        with patch.object(Path, "exists", return_value=False):
+            self.assertFalse(reader.exists(Path("not_a_path.txt")))
 
 
 if __name__ == '__main__':

@@ -89,6 +89,15 @@ class CppStartTests(unittest.TestCase):
 
         writer.write.assert_called_with({Path("Some/Path"): "some content"})
 
+    def test_get_config_doesnt_try_to_load_nonexistent_config(self):
+        file_access = FileReadWriter(Path())
+        file_access.exists = MagicMock(return_value=False)
+
+        with patch.object(Config, "load") as mock_cfg_load:
+            get_config(file_access)
+
+        mock_cfg_load.assert_not_called()
+
 
 class CopyrightNameTests(unittest.TestCase):
     class FakeArgs:

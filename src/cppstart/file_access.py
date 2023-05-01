@@ -16,6 +16,10 @@ class FileReader:
         with open(self._root_dir / path, "r") as f:
             return f.read()
 
+    def exists(self, path: Path):
+        full_path = self._root_dir / path
+        return full_path.exists()
+
 
 class FileReadWriter(FileReader):
     def __init__(self, root_dir: Path):
