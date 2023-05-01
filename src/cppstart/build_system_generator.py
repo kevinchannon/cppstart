@@ -1,7 +1,19 @@
 from pathlib import Path
+from abc import ABC, abstractmethod
+from enum import Enum
 
 
-class CMakeGenerator:
+class BuildSystemType(Enum):
+    CMAKE = 1
+
+
+class BuildSystemGenerator(ABC):
+    @abstractmethod
+    def run(self) -> dict[Path, str]:
+        pass
+
+
+class CMakeGenerator(BuildSystemGenerator):
     def __init__(self, project_name: str):
         self._project_name = project_name
 
@@ -51,3 +63,7 @@ endif() # MASTER_PROJECT
 
     def run(self) -> dict[Path, str]:
         return {Path("CMakeLists.txt"): self.TEMPLATE.replace("proj_name", self._project_name)}
+
+
+def make_build_system_generator(build_sys_type: BuildSystemType, project_name: str) -> BuildSystemGenerator:
+    return CMakeGenerator(project_name)
