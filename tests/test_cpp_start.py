@@ -58,7 +58,7 @@ class CppStartTests(unittest.TestCase):
         self.assertTrue(isinstance(app._source_generator, AppSourceGenerator))
 
     def test_factory_write_the_expected_source_files(self):
-        src_preamble = get_source_code_preamble("MIT", str(datetime.now().year), "Some Name")
+        src_preamble = get_source_code_preamble("MIT", "2023", "Some Name")
         writer = FileReadWriter(Path("foo"))
         writer.write = MagicMock()
 
@@ -70,9 +70,21 @@ class CppStartTests(unittest.TestCase):
             call({Path("include/foo/foo.hpp"): f"{src_preamble}\n\n#include <cstdint>\n",
                   Path(
                       "examples/main.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n",
+                  Path(
+                      "test/foo.tests.cpp"): f"{src_preamble}\n"
+                                             f"\n"
+                                             f"#include <foo/foo.hpp>\n"
+                                             f"\n"
+                                             f"#include <catch2/catch_test_macros.hpp>\n"
+                                             f"\n"
+                                             f"TEST_CASE(\"foo tests\") {{\n"
+                                             f"    SECTION(\"delete this require and add your own tests!\")\n"
+                                             f"        REQUIRE(false);\n"
+                                             f"}}\n",
                   Path("src/foo/foo.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n",
                   Path(
-                      "src/main.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"}
+                      "src/main.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"
+                  }
                  )
         ]
 
@@ -105,7 +117,8 @@ class CopyrightNameTests(unittest.TestCase):
             self.copyright_name = name
 
     def test_returns_value_from_args(self):
-        self.assertEqual("Foo B Baz", get_copyright_name(CopyrightNameTests.FakeArgs("Foo B Baz"), configparser.ConfigParser()))
+        self.assertEqual("Foo B Baz",
+                         get_copyright_name(CopyrightNameTests.FakeArgs("Foo B Baz"), configparser.ConfigParser()))
 
     def test_gets_name_from_config_if_not_in_args(self):
         args = CopyrightNameTests.FakeArgs(None)

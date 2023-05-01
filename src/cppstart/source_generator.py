@@ -14,10 +14,24 @@ class SourceGenerator(ABC):
         pass
 
 
-class __SourceGenerator(SourceGenerator):
+class __SourceGeneratorBase(SourceGenerator):
     _LICENSED_SOURCE = "{}\n\n{}"
-    _INCLUDE = """#include <cstdint>\n"""
-    _EXAMPLES_MAIN = "#include <{0}/{0}.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"
+    _INCLUDE = "#include <cstdint>\n"
+    _EXAMPLES_MAIN = \
+        "#include <{0}/{0}.hpp>\n" \
+        "\n" \
+        "auto main() -> int {{\n" \
+        "    return 0;\n" \
+        "}}\n"
+    _TEST_SRC = \
+        "#include <{0}/{0}.hpp>\n" \
+        "\n" \
+        "#include <catch2/catch_test_macros.hpp>\n" \
+        "\n" \
+        "TEST_CASE(\"{0} tests\") {{\n" \
+        "    SECTION(\"delete this require and add your own tests!\")\n" \
+        "        REQUIRE(false);\n" \
+        "}}\n"
 
     def __init__(self, project_name: str, license_text):
         assert isinstance(license_text, str) or license_text is None
@@ -29,16 +43,19 @@ class __SourceGenerator(SourceGenerator):
             self._include = self._LICENSED_SOURCE.format(self._license_text, self._INCLUDE)
             self._examples_main = self._LICENSED_SOURCE.format(self._license_text,
                                                                self._EXAMPLES_MAIN.format(self._proj_name))
+            self._test_src = self._LICENSED_SOURCE.format(self._license_text, self._TEST_SRC.format(self._proj_name))
         else:
             self._include = self._INCLUDE
             self._examples_main = self._EXAMPLES_MAIN.format(self._proj_name)
+            self._test_src = self._TEST_SRC.format(self._proj_name)
 
     def run(self) -> dict[Path, str]:
         return {Path("include") / self._proj_name / f"{self._proj_name}.hpp": self._include,
-                Path("examples") / "main.cpp": self._examples_main}
+                Path("examples") / "main.cpp": self._examples_main,
+                Path("test") / f"{self._proj_name}.tests.cpp": self._test_src}
 
 
-class AppSourceGenerator(__SourceGenerator):
+class AppSourceGenerator(__SourceGeneratorBase):
     def __init__(self, project_name: str, license_text=None):
         super().__init__(project_name, license_text)
 
@@ -59,7 +76,7 @@ class AppSourceGenerator(__SourceGenerator):
                 Path("src") / "main.cpp": self._proj_main}
 
 
-class LibSourceGenerator(__SourceGenerator):
+class LibSourceGenerator(__SourceGeneratorBase):
     def __init__(self, project_name: str, license_text=None):
         super().__init__(project_name, license_text)
 
