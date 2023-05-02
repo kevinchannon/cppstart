@@ -35,6 +35,16 @@ def get_many_files_in_hierarchy() -> dict[Path, str]:
     }
 
 
+def make_files_in_hierarchy(files: dict[Path, str]):
+    for path, content in files.items():
+        directory = TEST_DIR / path.parent
+        if not directory.exists():
+            os.makedirs(directory)
+
+        with open(TEST_DIR / path, "w") as f:
+            f.write(content)
+
+
 class FileWriterTests(unittest.TestCase):
     def setup(self) -> None:
         os.makedirs(TEST_DIR, exist_ok=True)
@@ -62,22 +72,26 @@ class FileWriterTests(unittest.TestCase):
 class FileReaderTests(unittest.TestCase):
     def setUp(self) -> None:
         self._test_path = Path("test_file.txt")
-        with open(self._test_path, "w") as f:
-            print("hello!", file=f, end="")
-
-        os.makedirs(TEST_DIR, exist_ok=True)
-        with open(TEST_DIR / self._test_path, "w") as f:
-            print("hello, sub-dir!", file=f, end="")
 
     def tearDown(self) -> None:
-        os.remove(self._test_path)
+        if self._test_path.exists():
+            self._test_path.unlink()
+
         shutil.rmtree(TEST_DIR, ignore_errors=True)
 
     def test_reads_file(self):
+        self._test_path = Path("test_file.txt")
+        with open(self._test_path, "w") as f:
+            print("hello!", file=f, end="")
+
         reader = FileReader()
         self.assertEqual("hello!", reader.read(self._test_path))
 
     def test_reads_files_in_root_directory(self):
+        os.makedirs(TEST_DIR, exist_ok=True)
+        with open(TEST_DIR / self._test_path, "w") as f:
+            print("hello, sub-dir!", file=f, end="")
+
         reader = FileReader(TEST_DIR)
         self.assertEqual("hello, sub-dir!", reader.read(self._test_path))
 
@@ -85,6 +99,12 @@ class FileReaderTests(unittest.TestCase):
         reader = FileReader(Path())
         with patch.object(Path, "exists", return_value=False):
             self.assertFalse(reader.exists(Path("not_a_path.txt")))
+
+    def test_read_all_reads_all_the_files_in_the_directory(self):
+        make_files_in_hierarchy(get_many_files_in_hierarchy())
+
+        reader = FileReader(TEST_DIR)
+        self.assertEqual(get_many_files_in_hierarchy(), reader.read_all())
 
 
 if __name__ == '__main__':

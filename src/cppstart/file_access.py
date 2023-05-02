@@ -16,6 +16,18 @@ class FileReader:
         with open(self._root_dir / path, "r") as f:
             return f.read()
 
+    def read_all(self):
+        return self._recursive_read_all(self._root_dir, {})
+
+    def _recursive_read_all(self, directory: Path, current: dict[Path, str]):
+        for path in directory.iterdir():
+            if path.is_file():
+                current[path.relative_to(self._root_dir)] = path.read_text()
+            elif path.is_dir():
+                self._recursive_read_all(path, current)
+
+        return current
+
     def exists(self, path: Path):
         full_path = self._root_dir / path
         return full_path.exists()
