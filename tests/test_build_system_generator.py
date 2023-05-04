@@ -1,25 +1,28 @@
 import unittest
+from unittest.mock import patch, MagicMock
 from parameterized import parameterized
 
 from src.cppstart.build_system_generator import *
 
 
 class CMakeGeneratorTests(unittest.TestCase):
-    def test_top_level_cmakelists_is_created(self):
-        generator = CMakeGenerator("foo")
-        contents = generator.run()
+    def test_reads_the_expected_template(self):
+        template_files = {
+            Path("dir/file.txt"): "template proj_name textproj_name",
+            Path("file.txt"): "template\n\n\nproj_name textproj_name"
+        }
 
-        self.assertTrue(Path("CMakeLists.txt") in contents)
-        self.assertTrue("foo" in contents[Path("CMakeLists.txt")])
+        with patch.object(FileReader, "read_all", return_value=template_files) as fake_read_fn:
+            generator = make_build_system_generator("cmake", "foo", Path("root"))
+            contents = generator.run()
 
+        self.assertEqual(Path("root/cmake"), generator._template_reader.root_directory)
 
-class MakeBuildSystemGeneratorTests(unittest.TestCase):
-    @parameterized.expand([
-        (BuildSystemType.CMAKE, CMakeGenerator)
-    ])
-    def test_returns_correct_generator_for_specified_type(self, build_sys_type, obj_type):
-        gen = make_build_system_generator(build_sys_type, "foo")
-        self.assertTrue(isinstance(gen, obj_type))
+        expected_content = {
+            Path("dir/file.txt"): "template foo textfoo",
+            Path("file.txt"): "template\n\n\nfoo textfoo"
+        }
+        self.assertEqual(expected_content, contents)
 
 
 if __name__ == '__main__':
