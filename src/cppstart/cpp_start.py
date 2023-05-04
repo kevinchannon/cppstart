@@ -16,7 +16,7 @@ CONFIG_DIR = Path(appdirs.user_config_dir(appname="cppstart", appauthor=False))
 
 
 class CppStart:
-    def __init__(self, source_generator: SourceGenerator):
+    def __init__(self, source_generator: SourceGenerator): # TODO: Add build system generator here
         self._source_generator = source_generator
 
     def run(self, file_writer: FileReadWriter):
