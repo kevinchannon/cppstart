@@ -96,10 +96,15 @@ class CppStartTests(unittest.TestCase):
         writer = FileReadWriter(Path("foo"))
         writer.write = MagicMock()
 
-        cpp_start = CppStart(source_generator=src_gen)
+        build_sys_template_reader = FileReader(Path("build_sys_template/dir"))
+        build_sys_template_reader.read_all = MagicMock(return_value={Path("build_sys_template/path"): "build sys template content"})
+        build_sys_gen = Generator({}, build_sys_template_reader)
+
+        cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen)
         cpp_start.run(writer)
 
         writer.write.assert_called_with({Path("Some/Path"): "some content"})
+        self.assertTrue(build_sys_template_reader.read_all.called)
 
     def test_get_config_doesnt_try_to_load_nonexistent_config(self):
         file_access = FileReadWriter(Path())

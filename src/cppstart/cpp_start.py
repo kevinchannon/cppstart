@@ -5,6 +5,8 @@ from datetime import datetime
 import appdirs
 
 from source_generator import *
+from build_system_generator import *
+from generator import *
 from project_type import ProjectType
 from file_access import FileReadWriter
 from license_generator import *
@@ -12,22 +14,27 @@ from config import Config
 
 PKG_DIR_PATH = Path(__file__).absolute().parent
 LICENSE_TEMPLATES_DIR = PKG_DIR_PATH / "templates/licenses"
+BUILD_SYSTEM_TEMPLATES_DIR = PKG_DIR_PATH / "templates/build_system"
 CONFIG_DIR = Path(appdirs.user_config_dir(appname="cppstart", appauthor=False))
 
 
 class CppStart:
-    def __init__(self, source_generator: SourceGenerator): # TODO: Add build system generator here
+    def __init__(self, source_generator: SourceGenerator, build_system_generator: Generator):
         self._source_generator = source_generator
+        self._templated_generators = [build_system_generator]
 
     def run(self, file_writer: FileReadWriter):
         file_writer.write(self._source_generator.run())
+        for generator in self._templated_generators:
+            generator.run()
 
 
 def make_cppstart(args, config: Config) -> CppStart:
     return CppStart(make_source_generator(args.project_type, args.proj_name,
                                           get_source_code_preamble(spdx_id=get_license(args).spdx_id,
                                                                    year=str(datetime.now().year),
-                                                                   copyright_name=get_copyright_name(args, config))))
+                                                                   copyright_name=get_copyright_name(args, config))),
+                    make_build_system_generator("cmake", args.proj_name, BUILD_SYSTEM_TEMPLATES_DIR))
 
 
 def get_license(args) -> License:
