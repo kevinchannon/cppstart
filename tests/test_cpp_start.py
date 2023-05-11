@@ -43,6 +43,15 @@ class ArgParserTests(unittest.TestCase):
         self.assertEqual("The Copyright Name", get_command_line_parser([]).parse_args(
             ["foo", "--copyright-name", "The Copyright Name"]).copyright_name)
 
+    def test_build_system_is_set_when_present(self):
+        self.assertEqual("meson",
+                         get_command_line_parser([]).parse_args(["foo", "-b", "meson"]).build_system)
+        self.assertEqual("meson",
+                         get_command_line_parser([]).parse_args(["foo", "--build-system", "meson"]).build_system)
+
+    def test_default_build_system_is_cmake(self):
+        self.assertEqual("cmake", get_command_line_parser([""]).parse_args(["foo"]).build_system)
+
 
 class CppStartTests(unittest.TestCase):
     _empty_config = Config(Path(), FileReadWriter(Path()))
