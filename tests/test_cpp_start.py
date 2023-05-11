@@ -13,7 +13,7 @@ class ArgParserTests(unittest.TestCase):
         self.assertEqual("foo", get_command_line_parser([]).parse_args(["foo"]).proj_name)
 
     def test_output_directory_is_set_when_present(self):
-        self.assertEqual("bar", get_command_line_parser([]).parse_args(["foo", "-d", "bar"]).output_directory)
+        self.assertEqual("bar", get_command_line_parser([]).parse_args(["foo", "-o", "bar"]).output_directory)
         self.assertEqual("bar",
                          get_command_line_parser([]).parse_args(["foo", "--output-directory", "bar"]).output_directory)
 
@@ -51,6 +51,16 @@ class ArgParserTests(unittest.TestCase):
 
     def test_default_build_system_is_cmake(self):
         self.assertEqual("cmake", get_command_line_parser([""]).parse_args(["foo"]).build_system)
+
+    def test_dependency_management_is_set_when_present(self):
+        self.assertEqual("vcpkg",
+                         get_command_line_parser([]).parse_args(["foo", "-d", "vcpkg"]).dependency_management)
+        self.assertEqual("vcpkg",
+                         get_command_line_parser([]).parse_args(
+                             ["foo", "--dependency-management", "vcpkg"]).dependency_management)
+
+    def test_dependency_management_is_conan(self):
+        self.assertEqual("conan", get_command_line_parser([""]).parse_args(["foo"]).dependency_management)
 
 
 class CppStartTests(unittest.TestCase):
@@ -106,14 +116,22 @@ class CppStartTests(unittest.TestCase):
         writer.write = MagicMock()
 
         build_sys_template_reader = FileReader(Path("build_sys_template/dir"))
-        build_sys_template_reader.read_all = MagicMock(return_value={Path("build_sys_template/path"): "build sys template content"})
+        build_sys_template_reader.read_all = MagicMock(
+            return_value={Path("build_sys_template/path"): "build sys template content"})
         build_sys_gen = Generator({}, build_sys_template_reader)
 
-        cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen)
+        deps_mgmt_template_reader = FileReader(Path("deps_mgmt_template/dir"))
+        deps_mgmt_template_reader.read_all = MagicMock(
+            return_value={Path("deps_mgmt_template/path"): "deps mgmt template content"})
+        deps_mgmt_gen = Generator({}, deps_mgmt_template_reader)
+
+        cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen,
+                             deps_mgmt_generator=deps_mgmt_gen)
         cpp_start.run(writer)
 
         writer.write.assert_called_with({Path("Some/Path"): "some content"})
         self.assertTrue(build_sys_template_reader.read_all.called)
+        self.assertTrue(deps_mgmt_template_reader.read_all.called)
 
     def test_get_config_doesnt_try_to_load_nonexistent_config(self):
         file_access = FileReadWriter(Path())
