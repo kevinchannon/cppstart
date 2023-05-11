@@ -7,6 +7,7 @@ import appdirs
 from source_generator import *
 from build_system_generator import *
 from dependency_management_generator import *
+from source_control_generator import *
 from generator import *
 from project_type import ProjectType
 from file_access import FileReadWriter
@@ -17,19 +18,20 @@ PKG_DIR_PATH = Path(__file__).absolute().parent
 LICENSE_TEMPLATES_DIR = PKG_DIR_PATH / "templates/licenses"
 BUILD_SYSTEM_TEMPLATES_DIR = PKG_DIR_PATH / "templates/build_system"
 DEPENDENCY_MANAGER_TEMPLATES_DIR = PKG_DIR_PATH / "templates/deps_mgmt"
+SOURCE_CONTROL_TEMPLATES_DIR = PKG_DIR_PATH / "templates/source_control"
 CONFIG_DIR = Path(appdirs.user_config_dir(appname="cppstart", appauthor=False))
 
 
 class CppStart:
     def __init__(self, source_generator: SourceGenerator, build_system_generator: Generator,
-                 deps_mgmt_generator: Generator):
+                 deps_mgmt_generator: Generator, scm_generator: Generator):
         self._source_generator = source_generator
-        self._templated_generators = [build_system_generator, deps_mgmt_generator]
+        self._templated_generators = [build_system_generator, deps_mgmt_generator, scm_generator]
 
     def run(self, file_writer: FileReadWriter):
         file_writer.write(self._source_generator.run())
         for generator in self._templated_generators:
-            generator.run()
+            file_writer.write(generator.run())
 
 
 def make_cppstart(args, config: Config) -> CppStart:
@@ -38,7 +40,8 @@ def make_cppstart(args, config: Config) -> CppStart:
                                                                    year=str(datetime.now().year),
                                                                    copyright_name=get_copyright_name(args, config))),
                     make_build_system_generator(args.build_system, args.proj_name, BUILD_SYSTEM_TEMPLATES_DIR),
-                    make_dependency_namagement_generator("conan", args.build_system, DEPENDENCY_MANAGER_TEMPLATES_DIR))
+                    make_dependency_namagement_generator(args.dependency_management, args.build_system, DEPENDENCY_MANAGER_TEMPLATES_DIR),
+                    make_source_control_generator(args.source_control, SOURCE_CONTROL_TEMPLATES_DIR))
 
 
 def get_license(args) -> License:
@@ -79,6 +82,8 @@ def get_command_line_parser(available_licenses: list[str]) -> argparse.ArgumentP
     parser.add_argument("-l", "--license", choices=available_licenses, default="MIT",
                         help="the license that will be used in the project")
     parser.add_argument("-o", "--output-directory", default=".", help="output directory")
+    parser.add_argument("-s", "--source-control", default="git",
+                        help="the type of source control that the project will use")
 
     return parser
 

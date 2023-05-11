@@ -5,7 +5,7 @@ from parameterized import parameterized
 from src.cppstart.dependency_management_generator import *
 
 
-class CMakeGeneratorTests(unittest.TestCase):
+class ConanGeneratorTests(unittest.TestCase):
     def test_reads_the_expected_template(self):
         template_files = {
             Path("conanfile.txt"): "[requires]\ncatch2/3.3.2\n\n[generators]\nbuild_sys_name\n",

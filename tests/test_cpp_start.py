@@ -62,6 +62,16 @@ class ArgParserTests(unittest.TestCase):
     def test_dependency_management_is_conan(self):
         self.assertEqual("conan", get_command_line_parser([""]).parse_args(["foo"]).dependency_management)
 
+    def test_source_control_is_set_when_present(self):
+        self.assertEqual("mercurial",
+                         get_command_line_parser([]).parse_args(["foo", "-s", "mercurial"]).source_control)
+        self.assertEqual("mercurial",
+                         get_command_line_parser([]).parse_args(
+                             ["foo", "--source-control", "mercurial"]).source_control)
+
+    def test_dependency_management_is_git(self):
+        self.assertEqual("git", get_command_line_parser([""]).parse_args(["foo"]).source_control)
+
 
 class CppStartTests(unittest.TestCase):
     _empty_config = Config(Path(), FileReadWriter(Path()))
@@ -125,13 +135,26 @@ class CppStartTests(unittest.TestCase):
             return_value={Path("deps_mgmt_template/path"): "deps mgmt template content"})
         deps_mgmt_gen = Generator({}, deps_mgmt_template_reader)
 
+        scm_template_reader = FileReader(Path("scm_template/dir"))
+        scm_template_reader.read_all = MagicMock(
+            return_value={Path("scm_template/path"): "scm template content"})
+        scm_gen = Generator({}, scm_template_reader)
+
         cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen,
-                             deps_mgmt_generator=deps_mgmt_gen)
+                             deps_mgmt_generator=deps_mgmt_gen, scm_generator=scm_gen)
         cpp_start.run(writer)
 
-        writer.write.assert_called_with({Path("Some/Path"): "some content"})
+        write_calls = [
+            call({Path("Some/Path"): "some content"}),
+            call({Path("build_sys_template/path"): "build sys template content"}),
+            call({Path("deps_mgmt_template/path"): "deps mgmt template content"}),
+            call({Path("scm_template/path"): "scm template content"})
+        ]
+
+        writer.write.assert_has_calls(write_calls)
         self.assertTrue(build_sys_template_reader.read_all.called)
         self.assertTrue(deps_mgmt_template_reader.read_all.called)
+        self.assertTrue(scm_template_reader.read_all.called)
 
     def test_get_config_doesnt_try_to_load_nonexistent_config(self):
         file_access = FileReadWriter(Path())
