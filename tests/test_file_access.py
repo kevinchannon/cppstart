@@ -6,7 +6,7 @@ import shutil
 from parameterized import parameterized
 
 from src.cppstart.file_access import *
-from src.cppstart.file_info import FileInfo
+from src.cppstart import file_info
 
 
 TEST_DIR = Path("test_files")
