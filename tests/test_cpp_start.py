@@ -6,6 +6,7 @@ from pathlib import Path
 from src.cppstart.cpp_start import *
 from src.cppstart.config import Config
 from src.cppstart.file_access import FileReadWriter
+from src.cppstart.file_info import FileInfo
 
 
 class ArgParserTests(unittest.TestCase):
@@ -96,11 +97,11 @@ class CppStartTests(unittest.TestCase):
         app.run(writer)
 
         write_calls = [
-            call({Path("include/foo/foo.hpp"): f"{src_preamble}\n\n#include <cstdint>\n",
-                  Path(
-                      "examples/main.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n",
-                  Path(
-                      "test/foo.tests.cpp"): f"{src_preamble}\n"
+            call([FileInfo(Path("include/foo/foo.hpp"), f"{src_preamble}\n\n#include <cstdint>\n"),
+                  FileInfo(Path(
+                      "examples/main.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"),
+                  FileInfo(Path(
+                      "test/foo.tests.cpp"), f"{src_preamble}\n"
                                              f"\n"
                                              f"#include <foo/foo.hpp>\n"
                                              f"\n"
@@ -109,11 +110,11 @@ class CppStartTests(unittest.TestCase):
                                              f"TEST_CASE(\"foo tests\") {{\n"
                                              f"    SECTION(\"delete this require and add your own tests!\")\n"
                                              f"        REQUIRE(false);\n"
-                                             f"}}\n",
-                  Path("src/foo/foo.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n",
-                  Path(
-                      "src/main.cpp"): f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"
-                  }
+                                             f"}}\n"),
+                  FileInfo(Path("src/foo/foo.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n"),
+                  FileInfo(Path(
+                      "src/main.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n")
+                  ]
                  )
         ]
 
@@ -121,23 +122,23 @@ class CppStartTests(unittest.TestCase):
 
     def test_writes_files(self):
         src_gen = AppSourceGenerator("foo")
-        src_gen.run = MagicMock(return_value={Path("Some/Path"): "some content"})
+        src_gen.run = MagicMock(return_value=[FileInfo(Path("Some/Path"), "some content")])
         writer = FileReadWriter(Path("foo"))
         writer.write = MagicMock()
 
         build_sys_template_reader = FileReader(Path("build_sys_template/dir"))
         build_sys_template_reader.read_all = MagicMock(
-            return_value={Path("build_sys_template/path"): "build sys template content"})
+            return_value=[FileInfo(Path("build_sys_template/path"), "build sys template content")])
         build_sys_gen = Generator({}, build_sys_template_reader)
 
         deps_mgmt_template_reader = FileReader(Path("deps_mgmt_template/dir"))
         deps_mgmt_template_reader.read_all = MagicMock(
-            return_value={Path("deps_mgmt_template/path"): "deps mgmt template content"})
+            return_value=[FileInfo(Path("deps_mgmt_template/path"), "deps mgmt template content")])
         deps_mgmt_gen = Generator({}, deps_mgmt_template_reader)
 
         scm_template_reader = FileReader(Path("scm_template/dir"))
         scm_template_reader.read_all = MagicMock(
-            return_value={Path("scm_template/path"): "scm template content"})
+            return_value=[FileInfo(Path("scm_template/path"), "scm template content")])
         scm_gen = Generator({}, scm_template_reader)
 
         cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen,
@@ -145,10 +146,10 @@ class CppStartTests(unittest.TestCase):
         cpp_start.run(writer)
 
         write_calls = [
-            call({Path("Some/Path"): "some content"}),
-            call({Path("build_sys_template/path"): "build sys template content"}),
-            call({Path("deps_mgmt_template/path"): "deps mgmt template content"}),
-            call({Path("scm_template/path"): "scm template content"})
+            call([FileInfo(Path("Some/Path"), "some content")]),
+            call([FileInfo(Path("build_sys_template/path"), "build sys template content")]),
+            call([FileInfo(Path("deps_mgmt_template/path"), "deps mgmt template content")]),
+            call([FileInfo(Path("scm_template/path"), "scm template content")])
         ]
 
         writer.write.assert_has_calls(write_calls)

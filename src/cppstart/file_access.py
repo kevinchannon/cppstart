@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from file_info import FileInfo
+
 
 class FileReader:
     def __init__(self, root_dir=None):
@@ -16,13 +18,13 @@ class FileReader:
         with open(self._root_dir / path, "r") as f:
             return f.read()
 
-    def read_all(self):
-        return self._recursive_read_all(self._root_dir, {})
+    def read_all(self) -> list[FileInfo]:
+        return self._recursive_read_all(self._root_dir, [])
 
-    def _recursive_read_all(self, directory: Path, current: dict[Path, str]):
+    def _recursive_read_all(self, directory: Path, current: list[FileInfo]) -> list[FileInfo]:
         for path in directory.iterdir():
             if path.is_file():
-                current[path.relative_to(self._root_dir)] = path.read_text()
+                current.append(FileInfo(path.relative_to(self._root_dir), path.read_text()))
             elif path.is_dir():
                 self._recursive_read_all(path, current)
 
@@ -37,9 +39,12 @@ class FileReadWriter(FileReader):
     def __init__(self, root_dir: Path):
         super().__init__(root_dir)
 
-    def write(self, things: dict[Path, str]):
-        for rel_path in things:
-            path = self._root_dir / rel_path
+    def write(self, things: list[FileInfo]):
+        for file_info in things:
+            path = self._root_dir / file_info.path
             if not path.parent.exists():
                 os.makedirs(path.parent)
-            path.write_text(things[rel_path])
+            path.write_text(file_info.content)
+
+            if file_info.permissions is not None:
+                os.chmod(path, file_info.permissions)

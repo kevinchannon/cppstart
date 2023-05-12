@@ -6,43 +6,44 @@ import shutil
 from parameterized import parameterized
 
 from src.cppstart.file_access import *
+from src.cppstart.file_info import FileInfo
 
 
 TEST_DIR = Path("test_files")
 
 
-def get_many_files_in_hierarchy() -> dict[Path, str]:
-    return {
-        Path("a.txt"): "a.txt",
-        Path("b.txt"): "b.txt",
-        Path("c.txt"): "c.txt",
-        Path("d/a.txt"): "da.txt",
-        Path("d/b.txt"): "db.txt",
-        Path("d/c.txt"): "dc.txt",
-        Path("e/a.txt"): "ea.txt",
-        Path("e/b.txt"): "eb.txt",
-        Path("e/c.txt"): "ec.txt",
-        Path("f/a.txt"): "fa.txt",
-        Path("f/b.txt"): "fb.txt",
-        Path("f/g/c.txt"): "fgc.txt",
-        Path("h/i/a.txt"): "hia.txt",
-        Path("h/i/b.txt"): "hib.txt",
-        Path("h/i/c.txt"): "hic.txt",
-        Path("h/i/j/a.txt"): "hija.txt",
-        Path("h/i/j/b.txt"): "hijb.txt",
-        Path("h/i/j/c.txt"): "hijc.txt",
-        Path("h/i/j/k/l/m/c.txt"): "hijklmc.txt"
-    }
+def get_many_files_in_hierarchy() -> list[FileInfo]:
+    return [
+        FileInfo(Path("a.txt"), "a.txt"),
+        FileInfo(Path("b.txt"), "b.txt"),
+        FileInfo(Path("c.txt"), "c.txt"),
+        FileInfo(Path("d/a.txt"), "da.txt"),
+        FileInfo(Path("d/b.txt"), "db.txt"),
+        FileInfo(Path("d/c.txt"), "dc.txt"),
+        FileInfo(Path("e/a.txt"), "ea.txt"),
+        FileInfo(Path("e/b.txt"), "eb.txt"),
+        FileInfo(Path("e/c.txt"), "ec.txt"),
+        FileInfo(Path("f/a.txt"), "fa.txt"),
+        FileInfo(Path("f/b.txt"), "fb.txt"),
+        FileInfo(Path("f/g/c.txt"), "fgc.txt"),
+        FileInfo(Path("h/i/a.txt"), "hia.txt"),
+        FileInfo(Path("h/i/b.txt"), "hib.txt"),
+        FileInfo(Path("h/i/c.txt"), "hic.txt"),
+        FileInfo(Path("h/i/j/a.txt"), "hija.txt"),
+        FileInfo(Path("h/i/j/b.txt"), "hijb.txt"),
+        FileInfo(Path("h/i/j/c.txt"), "hijc.txt"),
+        FileInfo(Path("h/i/j/k/l/m/c.txt"), "hijklmc.txt")
+    ]
 
 
-def make_files_in_hierarchy(files: dict[Path, str]):
-    for path, content in files.items():
-        directory = TEST_DIR / path.parent
+def make_files_in_hierarchy(files: list[FileInfo]):
+    for file in files:
+        directory = TEST_DIR / file.path.parent
         if not directory.exists():
             os.makedirs(directory)
 
-        with open(TEST_DIR / path, "w") as f:
-            f.write(content)
+        with open(TEST_DIR / file.path, "w") as f:
+            f.write(file.content)
 
 
 class FileWriterTests(unittest.TestCase):
@@ -55,18 +56,18 @@ class FileWriterTests(unittest.TestCase):
             os.remove("foo.txt")
 
     @parameterized.expand([
-        ("single file in current directory", Path("."), {Path("foo.txt"): "Hello, foo!"}),
-        ("single file in a nested directory", TEST_DIR, {Path("foo/bar.txt"): "Hello, FooBar!"}),
+        ("single file in current directory", Path("."), [FileInfo(Path("foo.txt"), "Hello, foo!")]),
+        ("single file in a nested directory", TEST_DIR, [FileInfo(Path("foo/bar.txt"), "Hello, FooBar!")]),
         ("multiple files in multiple nested directories", TEST_DIR, get_many_files_in_hierarchy())
     ])
-    def test_writes_contents_to_files(self, _, root_dir: Path, things_to_write: dict[Path, str]):
+    def test_writes_contents_to_files(self, _, root_dir: Path, things_to_write: list[FileInfo]):
         writer = FileReadWriter(root_dir)
         writer.write(things_to_write)
 
-        for rel_path in things_to_write:
-            path = root_dir / rel_path
+        for info in things_to_write:
+            path = root_dir / info.path
             self.assertTrue(path.exists())
-            self.assertEqual(things_to_write[rel_path], path.read_text())
+            self.assertEqual(info.content, path.read_text())
 
 
 class FileReaderTests(unittest.TestCase):

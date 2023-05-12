@@ -1,5 +1,6 @@
 from pathlib import Path
 from file_access import *
+from file_info import FileInfo
 
 
 class Generator:
@@ -7,14 +8,14 @@ class Generator:
         self._replacements = replacements
         self._template_reader = template_reader
 
-    def run(self) -> dict[Path, str]:
+    def run(self) -> list[FileInfo]:
         templates = self._template_reader.read_all()
-        output = {}
-        for path, template in templates.items():
-            content = template
+        output = []
+        for file in templates:
+            content = file.content
             for before, after in self._replacements.items():
                 content = content.replace(before, after)
 
-            output[path] = content
+            output.append(FileInfo(file.path, content))
 
         return output

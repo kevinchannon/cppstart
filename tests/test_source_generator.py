@@ -3,6 +3,7 @@ from parameterized import parameterized
 from pathlib import Path
 
 from src.cppstart.source_generator import *
+from src.cppstart.file_info import FileInfo
 
 
 class SourceBuilderTests(unittest.TestCase):
@@ -11,18 +12,22 @@ class SourceBuilderTests(unittest.TestCase):
         LibSourceGenerator("foo")
     ])
     def test_adds_include_file(self, builder):
-        contents = builder.run()
-        self.assertTrue(Path("include/foo/foo.hpp") in contents)
-        self.assertEqual(contents[Path("include/foo/foo.hpp")], "#include <cstdint>\n")
+        files = builder.run()
+
+        expected = next((f for f in files if f.path == Path("include/foo/foo.hpp")), None)
+        self.assertIsNotNone(expected)
+        self.assertEqual(expected.content, "#include <cstdint>\n")
 
     @parameterized.expand([
         AppSourceGenerator("foo"),
         LibSourceGenerator("foo")
     ])
     def test_adds_example_files(self, builder):
-        contents = builder.run()
-        self.assertTrue(Path("examples/main.cpp") in contents)
-        self.assertEqual(contents[Path("examples/main.cpp")],
+        files = builder.run()
+
+        expected = next((f for f in files if f.path == Path("examples/main.cpp")), None)
+        self.assertIsNotNone(expected)
+        self.assertEqual(expected.content,
                          "#include <foo/foo.hpp>\n\nauto main() -> int {\n    return 0;\n}\n")
 
     @parameterized.expand([
@@ -30,19 +35,25 @@ class SourceBuilderTests(unittest.TestCase):
         LibSourceGenerator("foo")
     ])
     def test_adds_source_files(self, builder):
-        contents = builder.run()
-        self.assertTrue(Path("src/foo/foo.cpp") in contents)
-        self.assertEqual(contents[Path("src/foo/foo.cpp")], "#include <foo/foo.hpp>\n")
+        files = builder.run()
+
+        expected = next((f for f in files if f.path == Path("src/foo/foo.cpp")), None)
+        self.assertIsNotNone(expected)
+        self.assertEqual(expected.content, "#include <foo/foo.hpp>\n")
 
     def test_app_source_builder_adds_main(self):
-        contents = AppSourceGenerator("foo").run()
-        self.assertTrue(Path("src/main.cpp") in contents)
-        self.assertEqual(contents[Path("src/main.cpp")],
+        files = AppSourceGenerator("foo").run()
+
+        expected = next((f for f in files if f.path == Path("src/main.cpp")), None)
+        self.assertIsNotNone(expected)
+        self.assertEqual(expected.content,
                          "#include <foo/foo.hpp>\n\nauto main() -> int {\n    return 0;\n}\n")
 
     def test_lib_source_builder_does_not_add_main(self):
-        contents = LibSourceGenerator("foo").run()
-        self.assertFalse(Path("src/main.cpp") in contents)
+        files = LibSourceGenerator("foo").run()
+
+        expected = next((f for f in files if f.path == Path("src/main.cpp")), None)
+        self.assertIsNone(expected)
 
     def test_source_builder_factory_returns_an_app_builder(self):
         builder = make_source_generator(ProjectType.APP, "foo")
@@ -57,8 +68,10 @@ class SourceBuilderTests(unittest.TestCase):
         ("Lib source builder", LibSourceGenerator("foo", "// The license!\n// Another license line."))
     ])
     def test_sources_have_license_at_the_top(self, _, builder):
-        contents = builder.run()
-        self.assertEqual(contents[Path("src/foo/foo.cpp")],
+        files = builder.run()
+
+        expected = next((f for f in files if f.path == Path("src/foo/foo.cpp")), None)
+        self.assertEqual(expected.content,
                          "// The license!\n// Another license line.\n\n#include <foo/foo.hpp>\n")
 
     def test_source_preamble_has_correct_spdx_id(self):
