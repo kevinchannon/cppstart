@@ -20,4 +20,13 @@ class FileInfo:
         return self._permissions
 
     def __eq__(self, other):
-        return self.path == other.path and self.content == other.content and self.permissions == other.permissions
+        return isinstance(other, FileInfo) \
+            and self.path == other.path \
+            and self.content == other.content \
+            and self.permissions == other.permissions
+
+    def __hash__(self):
+        return hash(self.path) ^ hash(self.content) ^ hash(self.permissions)
+
+    def __str__(self):
+        return f"{self.path} ({self.permissions}): {self.content[:100]}"

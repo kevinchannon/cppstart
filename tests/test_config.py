@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import MagicMock
 from parameterized import parameterized
 
-from src.cppstart.config import *
-from src.cppstart.file_access import *
+from config import *
+from file_access import *
 
 
 class ConfigTests(unittest.TestCase):

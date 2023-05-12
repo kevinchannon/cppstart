@@ -5,15 +5,15 @@ from pathlib import Path
 import shutil
 from parameterized import parameterized
 
-from src.cppstart.file_access import *
+from file_access import *
 from src.cppstart import file_info
 
 
 TEST_DIR = Path("test_files")
 
 
-def get_many_files_in_hierarchy() -> list[FileInfo]:
-    return [
+def get_many_files_in_hierarchy() -> set[FileInfo]:
+    return {
         FileInfo(Path("a.txt"), "a.txt"),
         FileInfo(Path("b.txt"), "b.txt"),
         FileInfo(Path("c.txt"), "c.txt"),
@@ -33,10 +33,10 @@ def get_many_files_in_hierarchy() -> list[FileInfo]:
         FileInfo(Path("h/i/j/b.txt"), "hijb.txt"),
         FileInfo(Path("h/i/j/c.txt"), "hijc.txt"),
         FileInfo(Path("h/i/j/k/l/m/c.txt"), "hijklmc.txt")
-    ]
+    }
 
 
-def make_files_in_hierarchy(files: list[FileInfo]):
+def make_files_in_hierarchy(files: set[FileInfo]):
     for file in files:
         directory = TEST_DIR / file.path.parent
         if not directory.exists():
@@ -56,11 +56,11 @@ class FileWriterTests(unittest.TestCase):
             os.remove("foo.txt")
 
     @parameterized.expand([
-        ("single file in current directory", Path("."), [FileInfo(Path("foo.txt"), "Hello, foo!")]),
-        ("single file in a nested directory", TEST_DIR, [FileInfo(Path("foo/bar.txt"), "Hello, FooBar!")]),
+        ("single file in current directory", Path("."), {FileInfo(Path("foo.txt"), "Hello, foo!")}),
+        ("single file in a nested directory", TEST_DIR, {FileInfo(Path("foo/bar.txt"), "Hello, FooBar!")}),
         ("multiple files in multiple nested directories", TEST_DIR, get_many_files_in_hierarchy())
     ])
-    def test_writes_contents_to_files(self, _, root_dir: Path, things_to_write: list[FileInfo]):
+    def test_writes_contents_to_files(self, _, root_dir: Path, things_to_write: set[FileInfo]):
         writer = FileReadWriter(root_dir)
         writer.write(things_to_write)
 

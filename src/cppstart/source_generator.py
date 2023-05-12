@@ -11,7 +11,7 @@ from file_info import FileInfo
 
 class SourceGenerator(ABC):
     @abstractmethod
-    def run(self) -> list[FileInfo]:
+    def run(self) -> set[FileInfo]:
         pass
 
 
@@ -50,10 +50,10 @@ class __SourceGeneratorBase(SourceGenerator):
             self._examples_main = self._EXAMPLES_MAIN.format(self._proj_name)
             self._test_src = self._TEST_SRC.format(self._proj_name)
 
-    def run(self) -> list[FileInfo]:
-        return [FileInfo(Path("include") / self._proj_name / f"{self._proj_name}.hpp", self._include),
+    def run(self) -> set[FileInfo]:
+        return {FileInfo(Path("include") / self._proj_name / f"{self._proj_name}.hpp", self._include),
                 FileInfo(Path("examples") / "main.cpp", self._examples_main),
-                FileInfo(Path("test") / f"{self._proj_name}.tests.cpp", self._test_src)]
+                FileInfo(Path("test") / f"{self._proj_name}.tests.cpp", self._test_src)}
 
 
 class AppSourceGenerator(__SourceGeneratorBase):
@@ -70,11 +70,11 @@ class AppSourceGenerator(__SourceGeneratorBase):
             self._proj_src = proj_src
             self._proj_main = proj_main
 
-    def run(self) -> list[FileInfo]:
+    def run(self) -> set[FileInfo]:
         base_content = super().run()
-        return [*base_content,
+        return {*base_content,
                 FileInfo(Path("src") / self._proj_name / f"{self._proj_name}.cpp", self._proj_src),
-                FileInfo(Path("src") / "main.cpp", self._proj_main)]
+                FileInfo(Path("src") / "main.cpp", self._proj_main)}
 
 
 class LibSourceGenerator(__SourceGeneratorBase):
@@ -88,10 +88,10 @@ class LibSourceGenerator(__SourceGeneratorBase):
         else:
             self._proj_src = proj_src
 
-    def run(self) -> list[FileInfo]:
+    def run(self) -> set[FileInfo]:
         base_content = super().run()
-        return [*base_content,
-                FileInfo(Path("src") / self._proj_name / f"{self._proj_name}.cpp", self._proj_src)]
+        return {*base_content,
+                FileInfo(Path("src") / self._proj_name / f"{self._proj_name}.cpp", self._proj_src)}
 
 
 def make_source_generator(project_type: ProjectType, project_name: str, license_text=None):

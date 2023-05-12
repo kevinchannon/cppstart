@@ -8,14 +8,14 @@ class Generator:
         self._replacements = replacements
         self._template_reader = template_reader
 
-    def run(self) -> list[FileInfo]:
+    def run(self) -> set[FileInfo]:
         templates = self._template_reader.read_all()
-        output = []
+        output = set()
         for file in templates:
             content = file.content
             for before, after in self._replacements.items():
                 content = content.replace(before, after)
 
-            output.append(FileInfo(file.path, content))
+            output.add(FileInfo(file.path, content))
 
         return output

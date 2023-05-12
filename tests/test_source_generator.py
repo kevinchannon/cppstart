@@ -2,8 +2,8 @@ import unittest
 from parameterized import parameterized
 from pathlib import Path
 
-from src.cppstart.source_generator import *
-from src.cppstart.file_info import FileInfo
+from source_generator import *
+from file_info import FileInfo
 
 
 class SourceBuilderTests(unittest.TestCase):

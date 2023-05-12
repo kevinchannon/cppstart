@@ -18,13 +18,13 @@ class FileReader:
         with open(self._root_dir / path, "r") as f:
             return f.read()
 
-    def read_all(self) -> list[FileInfo]:
-        return self._recursive_read_all(self._root_dir, [])
+    def read_all(self) -> set[FileInfo]:
+        return self._recursive_read_all(self._root_dir, set())
 
-    def _recursive_read_all(self, directory: Path, current: list[FileInfo]) -> list[FileInfo]:
+    def _recursive_read_all(self, directory: Path, current: set[FileInfo]) -> set[FileInfo]:
         for path in directory.iterdir():
             if path.is_file():
-                current.append(FileInfo(path.relative_to(self._root_dir), path.read_text()))
+                current.add(FileInfo(path.relative_to(self._root_dir), path.read_text()))
             elif path.is_dir():
                 self._recursive_read_all(path, current)
 
@@ -39,7 +39,7 @@ class FileReadWriter(FileReader):
     def __init__(self, root_dir: Path):
         super().__init__(root_dir)
 
-    def write(self, things: list[FileInfo]):
+    def write(self, things: set[FileInfo]):
         for file_info in things:
             path = self._root_dir / file_info.path
             if not path.parent.exists():

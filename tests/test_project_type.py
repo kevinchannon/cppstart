@@ -1,6 +1,6 @@
 import unittest
 
-from src.cppstart.project_type import *
+from project_type import *
 
 
 class ProjectTypeTests(unittest.TestCase):
