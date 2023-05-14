@@ -14,25 +14,25 @@ TEST_DIR = Path("test_files")
 
 def get_many_files_in_hierarchy() -> set[FileInfo]:
     return {
-        FileInfo(Path("a.txt"), "a.txt"),
-        FileInfo(Path("b.txt"), "b.txt"),
-        FileInfo(Path("c.txt"), "c.txt"),
-        FileInfo(Path("d/a.txt"), "da.txt"),
-        FileInfo(Path("d/b.txt"), "db.txt"),
-        FileInfo(Path("d/c.txt"), "dc.txt"),
-        FileInfo(Path("e/a.txt"), "ea.txt"),
-        FileInfo(Path("e/b.txt"), "eb.txt"),
-        FileInfo(Path("e/c.txt"), "ec.txt"),
-        FileInfo(Path("f/a.txt"), "fa.txt"),
-        FileInfo(Path("f/b.txt"), "fb.txt"),
-        FileInfo(Path("f/g/c.txt"), "fgc.txt"),
-        FileInfo(Path("h/i/a.txt"), "hia.txt"),
-        FileInfo(Path("h/i/b.txt"), "hib.txt"),
-        FileInfo(Path("h/i/c.txt"), "hic.txt"),
-        FileInfo(Path("h/i/j/a.txt"), "hija.txt"),
-        FileInfo(Path("h/i/j/b.txt"), "hijb.txt"),
-        FileInfo(Path("h/i/j/c.txt"), "hijc.txt"),
-        FileInfo(Path("h/i/j/k/l/m/c.txt"), "hijklmc.txt")
+        FileInfo(Path("a.txt"), "a.txt", 0o666),
+        FileInfo(Path("b.txt"), "b.txt", 0o666),
+        FileInfo(Path("c.txt"), "c.txt", 0o666),
+        FileInfo(Path("d/a.txt"), "da.txt", 0o666),
+        FileInfo(Path("d/b.txt"), "db.txt", 0o666),
+        FileInfo(Path("d/c.txt"), "dc.txt", 0o666),
+        FileInfo(Path("e/a.txt"), "ea.txt", 0o666),
+        FileInfo(Path("e/b.txt"), "eb.txt", 0o666),
+        FileInfo(Path("e/c.txt"), "ec.txt", 0o666),
+        FileInfo(Path("f/a.txt"), "fa.txt", 0o666),
+        FileInfo(Path("f/b.txt"), "fb.txt", 0o666),
+        FileInfo(Path("f/g/c.txt"), "fgc.txt", 0o666),
+        FileInfo(Path("h/i/a.txt"), "hia.txt", 0o666),
+        FileInfo(Path("h/i/b.txt"), "hib.txt", 0o666),
+        FileInfo(Path("h/i/c.txt"), "hic.txt", 0o666),
+        FileInfo(Path("h/i/j/a.txt"), "hija.txt", 0o666),
+        FileInfo(Path("h/i/j/b.txt"), "hijb.txt", 0o666),
+        FileInfo(Path("h/i/j/c.txt"), "hijc.txt", 0o666),
+        FileInfo(Path("h/i/j/k/l/m/c.txt"), "hijklmc.txt", 0o666)
     }
 
 
