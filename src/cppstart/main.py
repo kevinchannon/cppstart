@@ -86,13 +86,10 @@ def main():
     app = cpp_start.make_cppstart(args, config)
 
     dest_dir = copy_all_template_files(args)
-    os.rename(dest_dir / "template.gitignore", dest_dir / ".gitignore")
-    os.chmod(dest_dir / "init.sh", 0o755)
-    os.chmod(dest_dir / "build.sh", 0o755)
 
     copy_license_file(args.license, dest_dir, cpp_start.PKG_DIR_PATH)
 
-    app.run(file_access.FileReadWriter(Path(args.output_directory)))
+    app.run(file_access.FileReadWriter(Path(args.output_directory) / args.proj_name))
 
     initialise_git(dest_dir)
 
