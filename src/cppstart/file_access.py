@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from icecream import ic
 
 from file_info import FileInfo
 
@@ -45,9 +44,7 @@ class FileReadWriter(FileReader):
     def write(self, things: set[FileInfo]):
         for file_info in things:
             path = self._root_dir / file_info.path
-            ic(path)
             if not path.parent.exists():
-                ic("creating new dir")
                 os.makedirs(path.parent)
             path.write_text(file_info.content)
 
