@@ -23,6 +23,10 @@ class FileInfo:
     def permissions(self) -> int:
         return self._permissions
 
+    @permissions.setter
+    def permissions(self, new_permissions):
+        self._permissions = new_permissions
+
     def __eq__(self, other):
         return isinstance(other, FileInfo) \
             and self.path == other.path \
