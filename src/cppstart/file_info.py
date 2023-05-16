@@ -11,6 +11,10 @@ class FileInfo:
     def path(self) -> Path:
         return self._path
 
+    @path.setter
+    def path(self, new_path):
+        self._path = new_path
+
     @property
     def content(self) -> str:
         return self._content
