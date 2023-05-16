@@ -60,7 +60,7 @@ class ArgParserTests(unittest.TestCase):
                          get_command_line_parser([]).parse_args(
                              ["foo", "--dependency-management", "vcpkg"]).dependency_management)
 
-    def test_dependency_management_is_conan(self):
+    def test_default_dependency_management_is_conan(self):
         self.assertEqual("conan", get_command_line_parser([""]).parse_args(["foo"]).dependency_management)
 
     def test_source_control_is_set_when_present(self):
@@ -70,8 +70,20 @@ class ArgParserTests(unittest.TestCase):
                          get_command_line_parser([]).parse_args(
                              ["foo", "--source-control", "mercurial"]).source_control)
 
-    def test_dependency_management_is_git(self):
+    def test_default_dependency_management_is_git(self):
         self.assertEqual("git", get_command_line_parser([""]).parse_args(["foo"]).source_control)
+
+    def test_ci_is_set_when_present(self):
+        with self.subTest("short arg"):
+            self.assertEqual("jenkins",
+                             get_command_line_parser([]).parse_args(["foo", "-i", "jenkins"]).ci)
+        with self.subTest("long arg"):
+            self.assertEqual("jenkins",
+                             get_command_line_parser([]).parse_args(
+                                 ["foo", "--ci", "jenkins"]).ci)
+
+    def test_default_ci_is_github(self):
+        self.assertEqual("github", get_command_line_parser([""]).parse_args(["foo"]).ci)
 
 
 class CppStartTests(unittest.TestCase):
@@ -99,7 +111,8 @@ class CppStartTests(unittest.TestCase):
         write_calls = [
             call({FileInfo(Path("include/foo/foo.hpp"), f"{src_preamble}\n\n#include <cstdint>\n"),
                   FileInfo(Path(
-                      "examples/main.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"),
+                      "examples/main.cpp"),
+                      f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n"),
                   FileInfo(Path(
                       "test/foo.tests.cpp"), f"{src_preamble}\n"
                                              f"\n"
@@ -113,7 +126,8 @@ class CppStartTests(unittest.TestCase):
                                              f"}}\n"),
                   FileInfo(Path("src/foo/foo.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n"),
                   FileInfo(Path(
-                      "src/main.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n")
+                      "src/main.cpp"),
+                      f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n")
                   }
                  )
         ]
@@ -141,21 +155,28 @@ class CppStartTests(unittest.TestCase):
             return_value={FileInfo(Path("scm_template/path"), "scm template content")})
         scm_gen = Generator({}, scm_template_reader)
 
+        ci_template_reader = FileReader(Path("ci_template/dir"))
+        ci_template_reader.read_all = MagicMock(
+            return_value={FileInfo(Path("ci_template/path"), "ci template content")})
+        ci_gen = Generator({}, ci_template_reader)
+
         cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen,
-                             deps_mgmt_generator=deps_mgmt_gen, scm_generator=scm_gen)
+                             deps_mgmt_generator=deps_mgmt_gen, scm_generator=scm_gen, ci_generator=ci_gen)
         cpp_start.run(writer)
 
         write_calls = [
             call({FileInfo(Path("Some/Path"), "some content")}),
             call({FileInfo(Path("build_sys_template/path"), "build sys template content")}),
             call({FileInfo(Path("deps_mgmt_template/path"), "deps mgmt template content")}),
-            call({FileInfo(Path("scm_template/path"), "scm template content")})
+            call({FileInfo(Path("scm_template/path"), "scm template content")}),
+            call({FileInfo(Path("ci_template/path"), "ci template content")})
         ]
 
         writer.write.assert_has_calls(write_calls)
         self.assertTrue(build_sys_template_reader.read_all.called)
         self.assertTrue(deps_mgmt_template_reader.read_all.called)
         self.assertTrue(scm_template_reader.read_all.called)
+        self.assertTrue(ci_template_reader.read_all.called)
 
     def test_get_config_doesnt_try_to_load_nonexistent_config(self):
         file_access = FileReadWriter(Path())
