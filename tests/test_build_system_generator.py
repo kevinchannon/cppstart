@@ -23,7 +23,11 @@ class CMakeGeneratorTests(unittest.TestCase):
             FileInfo(Path("dir/file.txt"), "template foo textfoo"),
             FileInfo(Path("file.txt"), "template\n\n\nfoo textfoo")
         }
-        self.assertTrue(expected_content == contents)
+
+        for expected in expected_content:
+            contents.remove(expected)
+
+        self.assertTrue(len(contents) == 0)
 
 
 if __name__ == '__main__':

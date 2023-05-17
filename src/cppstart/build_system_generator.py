@@ -9,13 +9,10 @@ class BuildSystemGenerator(Generator):
     def run(self) -> set[FileInfo]:
         files = super().run()
 
-        build_script = next((f for f in files if f.path == Path("build.sh")), None)
-        assert(build_script is not None)
-        build_script.permissions = 0o755
-
-        build_script = next((f for f in files if f.path == Path("build.ps1")), None)
-        assert(build_script is not None)
-        build_script.permissions = 0o755
+        for p in [Path("build.sh"), Path("build.ps1")]:
+            build_script = next((f for f in files if f.path == p), None)
+            if build_script is not None:
+                build_script.permissions = 0o755
 
         return files
 

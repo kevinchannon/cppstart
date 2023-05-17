@@ -9,15 +9,13 @@ class DepsManagementGenerator(Generator):
     def run(self) -> set[FileInfo]:
         files = super().run()
 
-        init_script = next((f for f in files if f.path == Path("init.sh")), None)
-        assert(init_script is not None)
-        init_script.permissions = 0o755
-
-        init_script = next((f for f in files if f.path == Path("init.ps1")), None)
-        assert(init_script is not None)
-        init_script.permissions = 0o755
+        for p in [Path("init.sh"), Path("init.ps1")]:
+            build_script = next((f for f in files if f.path == p), None)
+            if build_script is not None:
+                build_script.permissions = 0o755
 
         return files
+
 
 def make_dependency_namagement_generator(dep_mgr_name: str, build_sys_name: str, template_root_dir: Path):
     return DepsManagementGenerator({"build_sys_name": build_sys_name}, FileReader(template_root_dir / dep_mgr_name))
