@@ -230,7 +230,7 @@ class CopyrightNameTests(unittest.TestCase):
 
         self.assertTrue(config.has("user", "copyright_name"))
         self.assertEqual("New User Name", config.get("user", "copyright_name"))
-        file_access.write.assert_called_with({Path("config4.ini"): "[user]\ncopyright_name@str = New User Name\n\n"})
+        file_access.write.assert_called_with({FileInfo(Path("config4.ini"), "[user]\ncopyright_name@str = New User Name\n\n")})
 
 
 if __name__ == '__main__':

@@ -34,8 +34,8 @@ class ConfigTests(unittest.TestCase):
 
         config.save()
 
-        self._file_access.write.assert_called_with({Path(
-            "cfg.ini"): "[section1]\n"
+        self._file_access.write.assert_called_with({FileInfo(Path(
+            "cfg.ini"), "[section1]\n"
                         "setting1@str = value1\n"
                         "setting2@int = 1000\n"
                         "setting3@float = 2.7\n"
@@ -46,7 +46,7 @@ class ConfigTests(unittest.TestCase):
                         "setting2@int = 2000\n"
                         "setting3@float = 1.618\n"
                         "setting4@bool = True\n"
-                        "\n"})
+                        "\n")})
 
     def test_set_adds_new_section_and_value(self):
         config = Config(Path("cfg.ini"), self._file_access)

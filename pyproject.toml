@@ -9,7 +9,7 @@ authors = [
 ]
 description = "Simplify the correct initialisation of C++ projects"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 keywords = ["C++", "libraries"]
 license = {text = "MIT"}
 classifiers = [

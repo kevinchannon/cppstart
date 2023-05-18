@@ -3,6 +3,7 @@ from pathlib import Path
 from io import StringIO
 
 from file_access import FileReadWriter
+from file_info import FileInfo
 
 
 class Config:
@@ -20,7 +21,7 @@ class Config:
             self._parser.write(cfg_str)
             cfg_str.seek(0)
 
-            self._file_access.write({self._filename: cfg_str.read()})
+            self._file_access.write({FileInfo(self._filename, cfg_str.read())})
 
     def get(self, section: str, item: str):
         getters = {"str": self._parser.get,
