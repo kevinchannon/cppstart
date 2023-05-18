@@ -21,6 +21,13 @@ This is disastrously simple advice for nascent C++ developers. C++ is _hard_. Ma
 
 This is not sensible advice for lion ownership. You're going to need a few more pieces of PPE and various other equipment if you want to avoid disembowelment at some point in your fairly near future.
 
+Typically, then, a project will start with a person hacking away at a main() in a project and running it to check the results. Quickly, some kind of build system, like CMake, will be needed. Then, at some point, they will decide that they should be using some kind of source control. Then, a bit later, maybe some kind of unit tests would be good and this code should probably be split into separate files, and maybe a library. But, **le sigh** getting some kind of unit test library in place requires managing the dependency on it. Who has time for all that!? It's easy enough to just copy the code into our repo and fix up the CMake files to use it properly
+
+And this is how things progress, slowly either transforming into a sensible project, or just... not.
+
+### A kick-start!
+CppStart allows a user to quickly start a new application or library project with a fairly complete "devops" infrastructure in place. This means that, right from the start, you will have in place unit tests, code formatting, source control, continuous integration build & test, release pipelines and more.
+
 ## Get `cppstart`
 `cppstart` is a python application, so you'll need a working Python install to use it. Once you have Python, then you can simply do `pip install cppstart` to install cppstart
 
@@ -31,8 +38,14 @@ cppstart foo
 ```
 That's it!
 
+If you want to create a library, called `bar`, then you simply do:
+```commandline
+cppstart --lib bar
+```
+And you're off.
+
 ### What do you get?
-Once you've run cppstart, you should see a new directory in the current folder with the name you specified for your project. In there, you will find a bunch of files and directories:
+Once you've run `cppstart`, you should see a new directory in the current folder with the name you specified for your project. In there, you will find a bunch of files and directories:
 ```
 /foo/
 |-- .clang-format           <--- Formats your code for you, if yo have Clang installed
