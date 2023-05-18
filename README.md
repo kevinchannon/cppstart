@@ -1,5 +1,25 @@
 # CPP Start
 `cppstart` is a simple command-line tool to initialise a reasonable C++ project.
+## Motivation
+When you first start writing C++, you will likely be confronted with an instruction like this:
+1. Make a file that looks like this and save it to main.cpp:
+    ```c++
+   #include <iostream>
+   
+   int main() {
+      std::cout << "Hello, World!" << std::endl;
+
+      return 0;
+   }
+   ```
+2. On a command line, do `g++ main.cpp -o a.out`
+3. Congratulations! You're now a C++ programmer!
+
+This is disastrously simple advice for nascent C++ developers. C++ is _hard_. Making out that it's not hard is lulling people into a false sense of security. Imagine I google for "how to keep a lion as a pet" and I find:
+1. Buy a lion cub
+2. Congratulations! You are now have a pet lion. Have fun!
+
+This is not sensible advice for lion ownership. You're going to need a few more pieces of PPE and various other equipment if you want to avoid disembowelment at some point in your fairly near future.
 
 ## Get `cppstart`
 `cppstart` is a python application, so you'll need a working Python install to use it. Once you have Python, then you can simply do `pip install cppstart` to install cppstart
