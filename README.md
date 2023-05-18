@@ -15,7 +15,7 @@ When you first start writing C++, you will likely be confronted with an instruct
 2. On a command line, do `g++ main.cpp -o a.out`
 3. Congratulations! You're now a C++ programmer!
 
-This is disastrously simple advice for nascent C++ developers. C++ is _hard_. Making out that it's not hard is lulling people into a false sense of security. Imagine I google for "how to keep a lion as a pet" and I find:
+This is disastrously simple advice for nascent C++ developers. Creating a fully-fledged C++ project is _hard_. Making out that it's not hard is lulling people into a false sense of security. Imagine I google for "how to keep a lion as a pet" and I find:
 1. Buy a lion cub
 2. Congratulations! You are now have a pet lion. Have fun!
 
