@@ -129,10 +129,29 @@ assertions: 1 | 1 failed
 As you can see, the test failed. This is intentional. You're now ready to go! Go write your first test for the project that you're planning to make and have fun coding safely in your full devops environment :)
 
 **A quick thing to note** is that the examples here are all on the command line, but you can totally just open the project in an IDE and work in there, if you like. You might need to set up some of the run configuration and parameters and whatnot, but it should be quite simple, as long as your chosen IDE understands CMake projects (or whatever build system you selected when creating the project).
+### Push your changes
+Once you've run `ccpstart`, then you will have a perfectly good repo to push to Github. You just need to make a new repo on Github and then follow the instructions to push an existing repo to it. Typically, this will involve adding a new remote that points to your repo and then pushing the changes to that repo.
+
+So, say your name is Aisha Adeboye and you want to make a new project called "Weebles", and you already have a Github repo with an equivalent name, then you might do something like:
+```shell
+cppstart weebles
+cd weebles
+git remote add origin git@github.com:aishaadeboye/weebles.git
+git push -u origin main
+```
+The way Github workflows work means that you won't generate any CI run on this first push, but the next one (and all the other ones after that) will.  This means that it's a good idea to get on with fixing the failing test by replacing it with one for some new code that you're writing; otherwise you'll get a test run failure on Github. How embarrassing!
+
+## Releasing your code
+There's a good chance that you're embarking on your project because you think other people might find its features useful in some way.  In that case, you'll probably want to create releases to distribute to other people. To do this, you should tag your repo with a tag like `v1.2.3`, or whatever release number you're on. Push that tag and then run a the "Release" action in the Gitub actions page for your project. This will produce things like a zip file of the code and things. There's a VERY high chance that you'll need to tweak things to get them the way you want them for your project, but the basics are kind of there to get you going (which is the point of this project :) ).  So, to create and push a tag, go for something like this:
+```shell
+git tag v1.2.3
+git push --tags
+```
+Then go trigger the "release" action on Github.
 
 ## All the options
 You can configure the type of project that gets created with the following options:
-```shell
+```text
 usage: cppstart [-h] [-A | -L]
                 [-b BUILD_SYSTEM]
                 [-c COPYRIGHT_NAME]
