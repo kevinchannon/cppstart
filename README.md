@@ -33,6 +33,15 @@ CppStart allows a user to quickly start a new application or library project wit
 ## Get `cppstart`
 `cppstart` is a python application, so you'll need a working Python install to use it. Once you have Python, then you can simply do `pip install cppstart` to install cppstart
 
+### (Meta) dependencies
+The project that you create with cppstart will have a bunch of things that it needs for smooth running. These include:
+* Git
+* Some kind of C++ compiler (MSVC++, GCC, Clang, whatever)
+* CMake
+* Conan
+* Clang-Format
+To initialise the project, then you'll need a connection to the internet too, since it will need to pull down Catch2 to use for unit testing your code.
+
 ## Creating a C++ project
 Say you want to create a new C++ application called "foo" in the current directory. Then just do:
 ```shell
