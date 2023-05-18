@@ -28,6 +28,8 @@ And this is how things progress, slowly either transforming into a sensible proj
 ### A kick-start!
 CppStart allows a user to quickly start a new application or library project with a fairly complete "devops" infrastructure in place. This means that, right from the start, you will have in place unit tests, code formatting, source control, continuous integration build & test, release pipelines and more.
 
+**NOTE:** What cppstart DOESN'T DO is apply any updates to the project once it's made, or add all the goodness to an existing project, or anything like that. It's a fire-once-and-then-you're-on-your-own kind of a thing.
+
 ## Get `cppstart`
 `cppstart` is a python application, so you'll need a working Python install to use it. Once you have Python, then you can simply do `pip install cppstart` to install cppstart
 
