@@ -40,6 +40,7 @@ The project that you create with cppstart will have a bunch of things that it ne
 * CMake
 * Conan
 * Clang-Format
+
 To initialise the project, then you'll need a connection to the internet too, since it will need to pull down Catch2 to use for unit testing your code.
 
 ## Creating a C++ project
