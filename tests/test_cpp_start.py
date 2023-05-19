@@ -99,12 +99,44 @@ class CppStartTests(unittest.TestCase):
         app = make_cppstart(args, self._empty_config)
         self.assertTrue(isinstance(app._source_generator, AppSourceGenerator))
 
-    def test_factory_write_the_expected_source_files(self):
+    def test_factory_write_the_expected_app_source_files(self):
         src_preamble = get_source_code_preamble("MIT", "2023", "Some Name")
         writer = FileReadWriter(Path("foo"))
         writer.write = MagicMock()
 
         args = get_command_line_parser([]).parse_args(["foo", "-c", "Some Name"])
+        app = make_cppstart(args, self._empty_config)
+        app.run(writer)
+
+        write_calls = [
+            call({FileInfo(Path("include/foo/foo.hpp"), f"{src_preamble}\n\n#include <cstdint>\n"),
+                  FileInfo(Path(
+                      "test/foo.tests.cpp"), f"{src_preamble}\n"
+                                             f"\n"
+                                             f"#include <foo/foo.hpp>\n"
+                                             f"\n"
+                                             f"#include <catch2/catch_test_macros.hpp>\n"
+                                             f"\n"
+                                             f"TEST_CASE(\"foo tests\") {{\n"
+                                             f"    SECTION(\"delete this require and add your own tests!\")\n"
+                                             f"        REQUIRE(false);\n"
+                                             f"}}\n"),
+                  FileInfo(Path("src/foo/foo.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n"),
+                  FileInfo(Path(
+                      "src/main.cpp"),
+                      f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n")
+                  }
+                 )
+        ]
+
+        writer.write.assert_has_calls(write_calls)
+
+    def test_factory_write_the_expected_lib_source_files(self):
+        src_preamble = get_source_code_preamble("MIT", "2023", "Some Name")
+        writer = FileReadWriter(Path("foo"))
+        writer.write = MagicMock()
+
+        args = get_command_line_parser([]).parse_args(["foo", "--lib", "-c", "Some Name"])
         app = make_cppstart(args, self._empty_config)
         app.run(writer)
 
@@ -124,10 +156,7 @@ class CppStartTests(unittest.TestCase):
                                              f"    SECTION(\"delete this require and add your own tests!\")\n"
                                              f"        REQUIRE(false);\n"
                                              f"}}\n"),
-                  FileInfo(Path("src/foo/foo.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n"),
-                  FileInfo(Path(
-                      "src/main.cpp"),
-                      f"{src_preamble}\n\n#include <foo/foo.hpp>\n\nauto main() -> int {{\n    return 0;\n}}\n")
+                  FileInfo(Path("src/foo/foo.cpp"), f"{src_preamble}\n\n#include <foo/foo.hpp>\n")
                   }
                  )
         ]

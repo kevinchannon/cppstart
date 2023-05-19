@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 add_executable(proj_name
-  "main.cpp"
+  main.cpp
 )
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)

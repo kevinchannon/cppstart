@@ -52,7 +52,6 @@ class __SourceGeneratorBase(SourceGenerator):
 
     def run(self) -> set[FileInfo]:
         return {FileInfo(Path("include") / self._proj_name / f"{self._proj_name}.hpp", self._include),
-                FileInfo(Path("examples") / "main.cpp", self._examples_main),
                 FileInfo(Path("test") / f"{self._proj_name}.tests.cpp", self._test_src)}
 
 
@@ -91,6 +90,7 @@ class LibSourceGenerator(__SourceGeneratorBase):
     def run(self) -> set[FileInfo]:
         base_content = super().run()
         return {*base_content,
+                FileInfo(Path("examples") / "main.cpp", self._examples_main),
                 FileInfo(Path("src") / self._proj_name / f"{self._proj_name}.cpp", self._proj_src)}
 
 

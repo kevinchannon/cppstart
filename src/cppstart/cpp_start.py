@@ -41,7 +41,7 @@ def make_cppstart(args, config: Config) -> CppStart:
                                           get_source_code_preamble(spdx_id=get_license(args).spdx_id,
                                                                    year=str(datetime.now().year),
                                                                    copyright_name=get_copyright_name(args, config))),
-                    make_build_system_generator(args.build_system, args.proj_name, BUILD_SYSTEM_TEMPLATES_DIR),
+                    make_build_system_generator(args.build_system, args.proj_name, args.project_type, BUILD_SYSTEM_TEMPLATES_DIR),
                     make_dependency_namagement_generator(args.dependency_management, args.build_system, DEPENDENCY_MANAGER_TEMPLATES_DIR),
                     make_source_control_generator(args.source_control, SOURCE_CONTROL_TEMPLATES_DIR),
                     make_ci_generator(args.ci, args.proj_name, CI_TEMPLATES_DIR))

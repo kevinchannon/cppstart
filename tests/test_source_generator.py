@@ -18,17 +18,19 @@ class SourceBuilderTests(unittest.TestCase):
         self.assertIsNotNone(expected)
         self.assertEqual(expected.content, "#include <cstdint>\n")
 
-    @parameterized.expand([
-        AppSourceGenerator("foo"),
-        LibSourceGenerator("foo")
-    ])
-    def test_adds_example_files(self, builder):
-        files = builder.run()
+    def test_lib_adds_example_files(self):
+        files = LibSourceGenerator("foo").run()
 
         expected = next((f for f in files if f.path == Path("examples/main.cpp")), None)
         self.assertIsNotNone(expected)
         self.assertEqual(expected.content,
                          "#include <foo/foo.hpp>\n\nauto main() -> int {\n    return 0;\n}\n")
+
+    def test_app_doesnt_add_example_files(self):
+        files = AppSourceGenerator("foo").run()
+
+        expected = next((f for f in files if f.path == Path("examples/main.cpp")), None)
+        self.assertIsNone(expected)
 
     @parameterized.expand([
         AppSourceGenerator("foo"),
@@ -53,6 +55,12 @@ class SourceBuilderTests(unittest.TestCase):
         files = LibSourceGenerator("foo").run()
 
         expected = next((f for f in files if f.path == Path("src/main.cpp")), None)
+        self.assertIsNone(expected)
+
+    def test_app_source_builder_does_not_add_examples(self):
+        files = AppSourceGenerator("foo").run()
+
+        expected = next((f for f in files if f.path == Path("examples/main.cpp")), None)
         self.assertIsNone(expected)
 
     def test_source_builder_factory_returns_an_app_builder(self):
