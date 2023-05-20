@@ -4,22 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cppstart"
-authors = [
-    {name = "Kevin J Channon", email = "kevinchannon+cppstart@gmail.com"},
-]
+authors = [ {name = "Kevin J Channon", email = "kevinchannon+cppstart@gmail.com"} ]
 description = "Simplify the correct initialisation of C++ projects"
 readme = "README.md"
 requires-python = ">=3.9"
 keywords = ["C++", "libraries"]
 license = {text = "MIT"}
-classifiers = [
-    "Programming Language :: Python :: 3",
-]
-dependencies = [
-    "appdirs",
-    "gitpython",
-]
+classifiers = [ "Programming Language :: Python :: 3" ]
+dependencies = [ "appdirs", "gitpython" ]
 dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/kevinchannon/cppstart"
+Source = "https://github.com/kevinchannon/cppstart"
 
 [tool.setuptools.dynamic]
 version = {file = "packaging/VERSION"}
