@@ -86,7 +86,10 @@ Once you've run `cppstart`, you should see a new directory in the current folder
 |-- conanfile.txt           <--- This pulls in third-party dependencies via Conan. It's used
 |                                by the "init" scripts. You can add new dependencies to it, as
 |                                your project develops and you need more third-party libs 
-|-- /examples               <--- Help your users with some working examples of how your code works
+|-- /examples               <--- Help your users with some working examples of how your code
+|                                works. If you created an APP project, then this directory
+|                                won't be here. You will run your project via src/main.cpp
+|                                instead.
 |   |-- CMakeLists.txt
 |  `-- main.cpp
 |-- /include                <--- The header files go in here.
@@ -99,7 +102,9 @@ Once you've run `cppstart`, you should see a new directory in the current folder
 |   |-- CMakeLists.txt
 |   |-- /foo
 |   |   `-- foo.cpp 
-|   `-- main.cpp
+|   `-- main.cpp            <--- This is the "main" file for your app. If you created a LIB
+|                                project, then this file won't be here. You'll run your library
+|                                code via the examples and the tests in that case.
 `-- /test                   <--- The unit tests for your project go in here. There is an initial
     |                            (failing) test to get you going :)
     |-- CMakeLists.txt
