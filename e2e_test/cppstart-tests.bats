@@ -10,19 +10,35 @@ setup() {
 
 teardown_file() {
     rm -rf foo
+    rm -rf bar
 }
 
-@test "creates a directory for the new project" {
+@test "creates a directory for a new application project" {
   cppstart foo -c "some user"
   assert_exist foo
 }
 
-@test "new project dependencies can be resolved out of the box" {
+@test "new app project dependencies can be resolved out of the box" {
   cd foo
   ./init.sh
 }
 
-@test "new project can be built out of the box" {
+@test "new app project can be built out of the box" {
   cd foo
+  ./build.sh
+}
+
+@test "creates a directory for a new library project" {
+  cppstart --lib bar
+  assert_exist bar
+}
+
+@test "new lib project dependencies can be resolved out of the box" {
+  cd bar
+  ./init.sh
+}
+
+@test "new lib project can be built out of the box" {
+  cd bar
   ./build.sh
 }
