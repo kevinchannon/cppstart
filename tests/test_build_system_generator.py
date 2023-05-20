@@ -50,11 +50,12 @@ class CMakeGeneratorTests(unittest.TestCase):
         self.assertEqual(2, len(files))
 
         self.assertIn(FileInfo(Path("src/CMakeLists.txt"),
-                     "cmake_minimum_required(VERSION 3.15)\n\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"), files)
+                               "cmake_minimum_required(VERSION 3.15)\n\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"),
+                      files)
 
         self.assertIn(FileInfo(Path("examples/CMakeLists.txt"),
-                     "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(foo\n  "
-                     "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"), files)
+                               "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(foo\n  "
+                               "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"), files)
 
     def test_app_has_src_main_but_no_examples(self):
         template_files = {
@@ -62,17 +63,25 @@ class CMakeGeneratorTests(unittest.TestCase):
                                                  "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"),
             FileInfo(Path("examples/CMakeLists.txt"),
                      "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(proj_name\n  "
-                     "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)")
+                     "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"),
+            FileInfo(Path("CMakeLists.txt"),
+                     "endif()\n\n  add_subdirectory (test)\n  add_subdirectory(examples)\n\n  set(package_files "
+                     "proj_name/  CMakeLists.txt)")
         }
 
         with patch.object(FileReader, "read_all", return_value=template_files) as fake_read_fn:
             generator = make_build_system_generator("cmake", "foo", ProjectType.APP, Path("root"))
             files = generator.run()
 
-        self.assertEqual(1, len(files))
+        self.assertEqual(2, len(files))
 
-        self.assertIn(FileInfo(Path("src/CMakeLists.txt"), "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(foo\n  "
-                                                 "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"), files)
+        self.assertIn(
+            FileInfo(Path("src/CMakeLists.txt"), "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(foo\n  "
+                                                 "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"),
+            files)
+        self.assertIn(FileInfo(Path("CMakeLists.txt"),
+                     "endif()\n\n  add_subdirectory (test)\n\n  set(package_files "
+                     "foo/  CMakeLists.txt)"), files)
 
 
 if __name__ == '__main__':

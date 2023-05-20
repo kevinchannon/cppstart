@@ -28,8 +28,8 @@ if (MASTER_PROJECT)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
   endif()
 
-  add_subdirectory ("test")
-  add_subdirectory("examples")
+  add_subdirectory(test)
+  add_subdirectory(examples)
 
   set(package_files proj_name/  CMakeLists.txt)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.${PROJECT_VERSION}.zip

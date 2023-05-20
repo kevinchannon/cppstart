@@ -41,6 +41,11 @@ class CMakeGenerator(BuildSystemGenerator):
             example_cmake_file = next((f for f in files if f.path == Path("examples/CMakeLists.txt")), None)
             files.remove(example_cmake_file)
 
+            cmake_file = next((f for f in files if f.path == Path("CMakeLists.txt")), None)
+            files.remove(cmake_file)
+            cmake_file.content = cmake_file.content.replace("  add_subdirectory(examples)\n", "")
+            files.add(cmake_file)
+
         return files
 
 
