@@ -29,7 +29,7 @@ teardown_file() {
 }
 
 @test "creates a directory for a new library project" {
-  cppstart --lib bar
+  cppstart --lib bar -c "User 2"
   assert_exist bar
 }
 
