@@ -27,15 +27,19 @@ class CMakeGenerator(BuildSystemGenerator):
     def run(self) -> set[FileInfo]:
         files = super().run()
 
-        src_cmake_file = next((f for f in files if f.path == Path("src/CMakeLists.txt")), None)
-        content_to_remove = "add_executable(proj_name\n  main.cpp\n)\n"
-        for old, new in self._replacements.items():
-            content_to_remove = content_to_remove.replace(old, new)
+        if self._project_type == ProjectType.LIB:
+            src_cmake_file = next((f for f in files if f.path == Path("src/CMakeLists.txt")), None)
+            content_to_remove = "add_executable(proj_name\n  main.cpp\n)\n"
+            for old, new in self._replacements.items():
+                content_to_remove = content_to_remove.replace(old, new)
 
-        files.remove(src_cmake_file)
+            files.remove(src_cmake_file)
 
-        src_cmake_file.content = src_cmake_file.content.replace(content_to_remove, "")
-        files.add(src_cmake_file)
+            src_cmake_file.content = src_cmake_file.content.replace(content_to_remove, "")
+            files.add(src_cmake_file)
+        elif self._project_type == ProjectType.APP:
+            example_cmake_file = next((f for f in files if f.path == Path("examples/CMakeLists.txt")), None)
+            files.remove(example_cmake_file)
 
         return files
 

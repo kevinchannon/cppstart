@@ -34,7 +34,7 @@ class CMakeGeneratorTests(unittest.TestCase):
         generator = make_build_system_generator("cmake", "foo", ProjectType.LIB, Path("root"))
         self.assertIsInstance(generator, CMakeGenerator)
 
-    def test_cmake_generator_removes_main_cpp_file(self):
+    def test_lib_has_examples_but_no_src_main(self):
         template_files = {
             FileInfo(Path("src/CMakeLists.txt"), "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(proj_name\n  "
                                                  "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"),
@@ -45,19 +45,34 @@ class CMakeGeneratorTests(unittest.TestCase):
 
         with patch.object(FileReader, "read_all", return_value=template_files) as fake_read_fn:
             generator = make_build_system_generator("cmake", "foo", ProjectType.LIB, Path("root"))
-            contents = generator.run()
+            files = generator.run()
 
-        expected_content = {
-            FileInfo(Path("src/CMakeLists.txt"), "cmake_minimum_required(VERSION 3.15)\n\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"),
-            FileInfo(Path("examples/CMakeLists.txt"),
+        self.assertEqual(2, len(files))
+
+        self.assertIn(FileInfo(Path("src/CMakeLists.txt"),
+                     "cmake_minimum_required(VERSION 3.15)\n\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"), files)
+
+        self.assertIn(FileInfo(Path("examples/CMakeLists.txt"),
                      "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(foo\n  "
+                     "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"), files)
+
+    def test_app_has_src_main_but_no_examples(self):
+        template_files = {
+            FileInfo(Path("src/CMakeLists.txt"), "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(proj_name\n  "
+                                                 "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"),
+            FileInfo(Path("examples/CMakeLists.txt"),
+                     "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(proj_name\n  "
                      "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)")
         }
 
-        for expected in expected_content:
-            contents.remove(expected)
+        with patch.object(FileReader, "read_all", return_value=template_files) as fake_read_fn:
+            generator = make_build_system_generator("cmake", "foo", ProjectType.APP, Path("root"))
+            files = generator.run()
 
-        self.assertTrue(len(contents) == 0)
+        self.assertEqual(1, len(files))
+
+        self.assertIn(FileInfo(Path("src/CMakeLists.txt"), "cmake_minimum_required(VERSION 3.15)\n\nadd_executable(foo\n  "
+                                                 "main.cpp\n)\ninclude(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)"), files)
 
 
 if __name__ == '__main__':
