@@ -17,3 +17,6 @@ class FileInfo:
 
     def __str__(self):
         return f"{self.path} ({self.permissions}): {self.content[:100]}"
+
+    def __repr__(self):
+        return f"{self.path} ({self.permissions}): {self.content[:100]}"
