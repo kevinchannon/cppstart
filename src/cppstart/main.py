@@ -83,10 +83,10 @@ def main():
     args = cpp_start.get_command_line_parser(
         license_generator.get_license_paths(cpp_start.LICENSE_TEMPLATES_DIR)).parse_args()
     config = cpp_start.get_config(file_access.FileReadWriter(cpp_start.CONFIG_DIR))
+
     app = cpp_start.make_cppstart(args, config)
 
-    dest_dir = copy_all_template_files(args)
-
+    dest_dir = Path(args.output_directory) / args.proj_name
     copy_license_file(args.license, dest_dir, cpp_start.PKG_DIR_PATH)
 
     app.run(file_access.FileReadWriter(Path(args.output_directory) / args.proj_name))

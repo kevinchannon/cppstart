@@ -26,14 +26,17 @@ CONFIG_DIR = Path(appdirs.user_config_dir(appname="cppstart", appauthor=False))
 
 class CppStart:
     def __init__(self, source_generator: SourceGenerator, build_system_generator: Generator,
-                 deps_mgmt_generator: Generator, scm_generator: Generator, ci_generator: Generator):
+                 deps_mgmt_generator: Generator, scm_generator: SourceControlGenerator, ci_generator: Generator):
         self._source_generator = source_generator
         self._templated_generators = [build_system_generator, deps_mgmt_generator, scm_generator, ci_generator]
+        self._source_control_initialiser = scm_generator.initialise
 
     def run(self, file_writer: FileReadWriter):
         file_writer.write(self._source_generator.run())
         for generator in self._templated_generators:
             file_writer.write(generator.run())
+
+        self._source_control_initialiser(file_writer.root_directory)
 
 
 def make_cppstart(args, config: Config) -> CppStart:

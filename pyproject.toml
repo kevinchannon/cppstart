@@ -15,7 +15,7 @@ dependencies = [ "appdirs", "gitpython" ]
 dynamic = ["version"]
 
 [project.urls]
-Documentation = "https://github.com/kevinchannon/cppstart"
+Documentation = "https://cppstart.readthedocs.io"
 Source = "https://github.com/kevinchannon/cppstart"
 
 [tool.setuptools.dynamic]

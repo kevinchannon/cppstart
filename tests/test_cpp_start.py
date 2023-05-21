@@ -182,7 +182,7 @@ class CppStartTests(unittest.TestCase):
         scm_template_reader = FileReader(Path("scm_template/dir"))
         scm_template_reader.read_all = MagicMock(
             return_value={FileInfo(Path("scm_template/path"), "scm template content")})
-        scm_gen = Generator({}, scm_template_reader)
+        scm_gen = SourceControlGenerator({}, scm_template_reader)
 
         ci_template_reader = FileReader(Path("ci_template/dir"))
         ci_template_reader.read_all = MagicMock(
