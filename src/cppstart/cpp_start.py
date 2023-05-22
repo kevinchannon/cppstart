@@ -26,9 +26,16 @@ CONFIG_DIR = Path(appdirs.user_config_dir(appname="cppstart", appauthor=False))
 
 class CppStart:
     def __init__(self, source_generator: SourceGenerator, build_system_generator: Generator,
-                 deps_mgmt_generator: Generator, scm_generator: SourceControlGenerator, ci_generator: Generator):
+                 deps_mgmt_generator: Generator, scm_generator: SourceControlGenerator, ci_generator: Generator,
+                 license_generator: Generator):
         self._source_generator = source_generator
-        self._templated_generators = [build_system_generator, deps_mgmt_generator, scm_generator, ci_generator]
+        self._templated_generators = [
+            build_system_generator,
+            deps_mgmt_generator,
+            scm_generator,
+            ci_generator,
+            license_generator
+        ]
         self._source_control_initialiser = scm_generator.initialise
 
     def run(self, file_writer: FileReadWriter):
@@ -36,23 +43,24 @@ class CppStart:
         for generator in self._templated_generators:
             file_writer.write(generator.run())
 
-        self._source_control_initialiser(file_writer.root_directory)
+    def initialise(self, root_directory):
+        self._source_control_initialiser(root_directory)
 
 
 def make_cppstart(args, config: Config) -> CppStart:
+    year = str(datetime.now().year)
+    license_gen = make_license_generator(args.license, LICENSE_TEMPLATES_DIR, year, args.copyright_name)
     return CppStart(make_source_generator(args.project_type, args.proj_name,
-                                          get_source_code_preamble(spdx_id=get_license(args).spdx_id,
-                                                                   year=str(datetime.now().year),
+                                          get_source_code_preamble(spdx_id=license_gen.spdx_id,
+                                                                   year=year,
                                                                    copyright_name=get_copyright_name(args, config))),
-                    make_build_system_generator(args.build_system, args.proj_name, args.project_type, BUILD_SYSTEM_TEMPLATES_DIR),
-                    make_dependency_namagement_generator(args.dependency_management, args.build_system, DEPENDENCY_MANAGER_TEMPLATES_DIR),
+                    make_build_system_generator(args.build_system, args.proj_name, args.project_type,
+                                                BUILD_SYSTEM_TEMPLATES_DIR),
+                    make_dependency_namagement_generator(args.dependency_management, args.build_system,
+                                                         DEPENDENCY_MANAGER_TEMPLATES_DIR),
                     make_source_control_generator(args.source_control, SOURCE_CONTROL_TEMPLATES_DIR),
-                    make_ci_generator(args.ci, args.proj_name, CI_TEMPLATES_DIR))
-
-
-def get_license(args) -> License:
-    return LicenseGenerator(licences=get_license_paths(LICENSE_TEMPLATES_DIR), default="MIT",
-                            file_reader=FileReader(LICENSE_TEMPLATES_DIR)).get(args.license)
+                    make_ci_generator(args.ci, args.proj_name, CI_TEMPLATES_DIR),
+                    license_gen)
 
 
 def get_copyright_name(args, config: Config) -> str:

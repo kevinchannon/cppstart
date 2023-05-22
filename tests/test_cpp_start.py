@@ -189,8 +189,14 @@ class CppStartTests(unittest.TestCase):
             return_value={FileInfo(Path("ci_template/path"), "ci template content")})
         ci_gen = Generator({}, ci_template_reader)
 
+        license_template_reader = FileReader(Path("license_template/dir"))
+        license_template_reader.read_all = MagicMock(
+            return_value={FileInfo(Path("license_template/path"), "license template content")})
+        lic_gen = Generator({}, license_template_reader)
+
         cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen,
-                             deps_mgmt_generator=deps_mgmt_gen, scm_generator=scm_gen, ci_generator=ci_gen)
+                             deps_mgmt_generator=deps_mgmt_gen, scm_generator=scm_gen, ci_generator=ci_gen,
+                             license_generator=lic_gen)
         cpp_start.run(writer)
 
         write_calls = [
@@ -198,7 +204,8 @@ class CppStartTests(unittest.TestCase):
             call({FileInfo(Path("build_sys_template/path"), "build sys template content")}),
             call({FileInfo(Path("deps_mgmt_template/path"), "deps mgmt template content")}),
             call({FileInfo(Path("scm_template/path"), "scm template content")}),
-            call({FileInfo(Path("ci_template/path"), "ci template content")})
+            call({FileInfo(Path("ci_template/path"), "ci template content")}),
+            call({FileInfo(Path("license_template/path"), "license template content")})
         ]
 
         writer.write.assert_has_calls(write_calls)
@@ -206,6 +213,7 @@ class CppStartTests(unittest.TestCase):
         self.assertTrue(deps_mgmt_template_reader.read_all.called)
         self.assertTrue(scm_template_reader.read_all.called)
         self.assertTrue(ci_template_reader.read_all.called)
+        self.assertTrue(license_template_reader.read_all.called)
 
     def test_get_config_doesnt_try_to_load_nonexistent_config(self):
         file_access = FileReadWriter(Path())
@@ -259,7 +267,8 @@ class CopyrightNameTests(unittest.TestCase):
 
         self.assertTrue(config.has("user", "copyright_name"))
         self.assertEqual("New User Name", config.get("user", "copyright_name"))
-        file_access.write.assert_called_with({FileInfo(Path("config4.ini"), "[user]\ncopyright_name@str = New User Name\n\n")})
+        file_access.write.assert_called_with(
+            {FileInfo(Path("config4.ini"), "[user]\ncopyright_name@str = New User Name\n\n")})
 
 
 if __name__ == '__main__':

@@ -1,46 +1,30 @@
 from pathlib import Path
 import os
 
-from file_access import FileReader
+from file_access import FileReader, FileReadWriter
+from generator import Generator
+from file_info import FileInfo
 
 
-class LicenseGeneratorException(Exception):
-    pass
+class LicenseGenerator(Generator):
+    def __init__(self, spdx_id: str, year: str, copyright_name: str, file_reader: FileReader):
+        super().__init__({"$year": year, "$copyright_name": copyright_name}, file_reader)
 
-
-class License:
-    def __init__(self, spdx_id: str, text: str):
         self._spdx_id = spdx_id
-        self._text = text
 
     @property
     def spdx_id(self):
         return self._spdx_id
 
-    @property
-    def text(self):
-        return self._text
+    def run(self) -> set[FileInfo]:
+        all_files = super().run()
+        license_file = next((f for f in all_files if f.path.name == self._spdx_id), None)
+
+        return {license_file}
 
 
-class LicenseGenerator:
-    def __init__(self, licences: list[str], default: str, file_reader: FileReader):
-        if default not in licences:
-            raise LicenseGeneratorException(f"'{default}' is not an available license")
-
-        self._licenses = licences
-        self._default = default
-        self._file_reader = file_reader
-
-    @property
-    def default_license(self):
-        return self._default
-
-    @property
-    def available_licenses(self):
-        return self._licenses
-
-    def get(self, spdx_id: str) -> License:
-        return License(spdx_id, self._file_reader.read(Path(spdx_id)))
+def make_license_generator(spdx_id: str, license_templates_dir: Path, year: str, copyright_name: str) -> LicenseGenerator:
+    return LicenseGenerator(spdx_id, year, copyright_name, FileReader(license_templates_dir))
 
 
 def get_license_paths(root_dir: Path) -> list[str]:
