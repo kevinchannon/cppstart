@@ -183,6 +183,7 @@ class CppStartTests(unittest.TestCase):
         scm_template_reader.read_all = MagicMock(
             return_value={FileInfo(Path("scm_template/path"), "scm template content")})
         scm_gen = SourceControlGenerator({}, scm_template_reader)
+        scm_gen.email = MagicMock(return_value="specialagentfoo@hotmail.com")
 
         ci_template_reader = FileReader(Path("ci_template/dir"))
         ci_template_reader.read_all = MagicMock(
@@ -194,9 +195,14 @@ class CppStartTests(unittest.TestCase):
             return_value={FileInfo(Path("license_template/path"), "license template content")})
         lic_gen = Generator({}, license_template_reader)
 
+        pkg_template_reader = FileReader(Path("packaging_template/dir"))
+        pkg_template_reader.read_all = MagicMock(
+            return_value={FileInfo(Path("packaging_template/path"), "packaging template content")})
+        pkg_gen = Generator({}, pkg_template_reader)
+
         cpp_start = CppStart(source_generator=src_gen, build_system_generator=build_sys_gen,
                              deps_mgmt_generator=deps_mgmt_gen, scm_generator=scm_gen, ci_generator=ci_gen,
-                             license_generator=lic_gen)
+                             license_generator=lic_gen, packaging_system_generator=pkg_gen)
         cpp_start.run(writer)
 
         write_calls = [
@@ -205,7 +211,8 @@ class CppStartTests(unittest.TestCase):
             call({FileInfo(Path("deps_mgmt_template/path"), "deps mgmt template content")}),
             call({FileInfo(Path("scm_template/path"), "scm template content")}),
             call({FileInfo(Path("ci_template/path"), "ci template content")}),
-            call({FileInfo(Path("license_template/path"), "license template content")})
+            call({FileInfo(Path("license_template/path"), "license template content")}),
+            call({FileInfo(Path("packaging_template/path"), "packaging template content")})
         ]
 
         writer.write.assert_has_calls(write_calls)
@@ -214,6 +221,7 @@ class CppStartTests(unittest.TestCase):
         self.assertTrue(scm_template_reader.read_all.called)
         self.assertTrue(ci_template_reader.read_all.called)
         self.assertTrue(license_template_reader.read_all.called)
+        self.assertTrue(pkg_template_reader.read_all.called)
 
     def test_get_config_doesnt_try_to_load_nonexistent_config(self):
         file_access = FileReadWriter(Path())

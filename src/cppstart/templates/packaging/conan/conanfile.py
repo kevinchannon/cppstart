@@ -10,7 +10,7 @@ class proj_nameRecipe(ConanFile):
     license = "$license_name"
     author = "$copyright_name $author_email"
     url = "$url"
-    description = "Here is a long description of the awesome proj_name project and what it can do for its uaers."
+    description = "Here is a long description of the awesome proj_name project and what it can do for its users."
     topics = ("<Put some tag here>", "<here>", "<and here>")
 
     # Binary configuration

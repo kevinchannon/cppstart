@@ -13,6 +13,7 @@ from generator import *
 from project_type import ProjectType
 from file_access import FileReadWriter
 from license_generator import *
+from packaging_system_generator import *
 from config import Config
 
 PKG_DIR_PATH = Path(__file__).absolute().parent
@@ -21,21 +22,25 @@ BUILD_SYSTEM_TEMPLATES_DIR = PKG_DIR_PATH / "templates/build_system"
 DEPENDENCY_MANAGER_TEMPLATES_DIR = PKG_DIR_PATH / "templates/deps_mgmt"
 SOURCE_CONTROL_TEMPLATES_DIR = PKG_DIR_PATH / "templates/source_control"
 CI_TEMPLATES_DIR = PKG_DIR_PATH / "templates/ci"
+PACKAGING_TEMPLATES_DIR = PKG_DIR_PATH / "templates/packaging"
+
 CONFIG_DIR = Path(appdirs.user_config_dir(appname="cppstart", appauthor=False))
 
 
 class CppStart:
     def __init__(self, source_generator: SourceGenerator, build_system_generator: Generator,
                  deps_mgmt_generator: Generator, scm_generator: SourceControlGenerator, ci_generator: Generator,
-                 license_generator: Generator):
+                 license_generator: Generator, packaging_system_generator: Generator):
         self._source_generator = source_generator
         self._templated_generators = [
             build_system_generator,
             deps_mgmt_generator,
             scm_generator,
             ci_generator,
-            license_generator
+            license_generator,
+            packaging_system_generator,
         ]
+
         self._source_control_initialiser = scm_generator.initialise
 
     def run(self, file_writer: FileReadWriter):
@@ -50,6 +55,8 @@ class CppStart:
 def make_cppstart(args, config: Config) -> CppStart:
     year = str(datetime.now().year)
     license_gen = make_license_generator(args.license, LICENSE_TEMPLATES_DIR, year, args.copyright_name)
+    src_control_gen = make_source_control_generator(args.source_control, SOURCE_CONTROL_TEMPLATES_DIR)
+    possible_github_username = src_control_gen.email().split('@')[0]
     return CppStart(make_source_generator(args.project_type, args.proj_name,
                                           get_source_code_preamble(spdx_id=license_gen.spdx_id,
                                                                    year=year,
@@ -58,9 +65,13 @@ def make_cppstart(args, config: Config) -> CppStart:
                                                 BUILD_SYSTEM_TEMPLATES_DIR),
                     make_dependency_namagement_generator(args.dependency_management, args.build_system,
                                                          DEPENDENCY_MANAGER_TEMPLATES_DIR),
-                    make_source_control_generator(args.source_control, SOURCE_CONTROL_TEMPLATES_DIR),
+                    src_control_gen,
                     make_ci_generator(args.ci, args.proj_name, CI_TEMPLATES_DIR),
-                    license_gen)
+                    license_gen,
+                    make_packaging_system_generator("conan", args.proj_name, args.license,
+                                                    get_copyright_name(args, config), src_control_gen.email(),
+                                                    f"https://github.com:{possible_github_username}/{args.proj_name}",
+                                                    PACKAGING_TEMPLATES_DIR))
 
 
 def get_copyright_name(args, config: Config) -> str:
