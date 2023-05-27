@@ -34,3 +34,22 @@ class ConanGeneratorTests(unittest.TestCase):
                            "url = \"https://github.com/githubuser/foo\""
 
         self.assertIn(FileInfo(Path("dir/file.txt"), expected_content), files)
+
+    def test_renames_conan_files_marked_for_renaming(self):
+        template_files = {
+            FileInfo(Path("dir/file1.rename_to_py"), "File 1 content"),
+            FileInfo(Path("dir/file2.txt"), "File 2 content"),
+            FileInfo(Path("dir/file3.rename_to_py"), "File 3 content")
+        }
+
+        with patch.object(FileReader, "read_all", return_value=template_files) as fake_read_fn:
+            generator = make_packaging_system_generator("conan", "foo", "MIT", "Some copyright name",
+                                                        "me@there.com", "https://github.com/githubuser/foo",
+                                                        Path("root"))
+            files = generator.run()
+
+        self.assertEqual(3, len(files))
+
+        self.assertIn(FileInfo(Path("dir/file1.py"), "File 1 content"), files)
+        self.assertIn(FileInfo(Path("dir/file2.txt"), "File 2 content"), files)
+        self.assertIn(FileInfo(Path("dir/file3.py"), "File 3 content"), files)
