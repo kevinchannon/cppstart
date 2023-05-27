@@ -212,7 +212,7 @@ class CppStartTests(unittest.TestCase):
             call({FileInfo(Path("scm_template/path"), "scm template content")}),
             call({FileInfo(Path("ci_template/path"), "ci template content")}),
             call({FileInfo(Path("license_template/path"), "license template content")}),
-#            call({FileInfo(Path("packaging_template/path"), "packaging template content")})
+            call({FileInfo(Path("packaging_template/path"), "packaging template content")})
         ]
 
         writer.write.assert_has_calls(write_calls)
@@ -221,7 +221,7 @@ class CppStartTests(unittest.TestCase):
         self.assertTrue(scm_template_reader.read_all.called)
         self.assertTrue(ci_template_reader.read_all.called)
         self.assertTrue(license_template_reader.read_all.called)
-#        self.assertTrue(pkg_template_reader.read_all.called)
+        self.assertTrue(pkg_template_reader.read_all.called)
 
     def test_get_config_doesnt_try_to_load_nonexistent_config(self):
         file_access = FileReadWriter(Path())
