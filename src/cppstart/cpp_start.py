@@ -54,7 +54,7 @@ class CppStart:
 
 def make_cppstart(args, config: Config) -> CppStart:
     year = str(datetime.now().year)
-    license_gen = make_license_generator(args.license, LICENSE_TEMPLATES_DIR, year, args.copyright_name)
+    license_gen = make_license_generator(args.license, LICENSE_TEMPLATES_DIR, year, get_copyright_name(args, config))
     src_control_gen = make_source_control_generator(args.source_control, SOURCE_CONTROL_TEMPLATES_DIR)
     possible_github_username = src_control_gen.email().split('@')[0]
     return CppStart(make_source_generator(args.project_type, args.proj_name,
