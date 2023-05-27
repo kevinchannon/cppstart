@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.15)
 
-project (proj_name)
+project(proj_name)
 
 add_library(proj_nameLib INTERFACE)
 add_library(proj_nameLib::proj_nameLib ALIAS proj_nameLib)
