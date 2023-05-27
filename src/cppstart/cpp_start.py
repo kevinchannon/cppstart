@@ -38,7 +38,7 @@ class CppStart:
             scm_generator,
             ci_generator,
             license_generator,
-            packaging_system_generator,
+ #           packaging_system_generator,
         ]
 
         self._source_control_initialiser = scm_generator.initialise
