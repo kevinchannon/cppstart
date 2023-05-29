@@ -11,9 +11,9 @@ class ConanGenerator(Generator):
     def run(self) -> set[FileInfo]:
         all_files = super().run()
 
-        for file in filter(lambda f: str(f.path).endswith("rename_to_py"), all_files):
+        for file in filter(lambda f: str(f.path).endswith(".rename_to_py"), all_files):
             all_files.remove(file)
-            file.path = Path(str(file.path).replace("rename_to_py", "py"))
+            file.path = Path(str(file.path).replace(".rename_to_py", ".py"))
             all_files.add(file)
 
         return all_files

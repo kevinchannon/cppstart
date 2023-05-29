@@ -53,6 +53,5 @@ class GitSourceControlGenerator(SourceControlGenerator):
         return ""
 
 
-
 def make_source_control_generator(scm_name: str, template_root_dir: Path):
     return GitSourceControlGenerator({}, FileReader(template_root_dir / scm_name))

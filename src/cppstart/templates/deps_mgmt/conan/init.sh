@@ -24,7 +24,9 @@ while getopts ":t:o:" opt; do
   esac
 done
 
-conan install . --build=missing -s build_type=$BUILD_TYPE -if $INSTALL_DIR
+##> APP ONLY :conan install . --build=missing -s build_type=$BUILD_TYPE -if $INSTALL_DIR
+##> LIB ONLY :conan install ./conanfile.py --build=missing -s build_type=$BUILD_TYPE -if $INSTALL_DIR
+##> LIB ONLY :conan install ./test/conanfile.py --build=missing -s build_type=$BUILD_TYPE -if $INSTALL_DIR
 
 mkdir -p .cppstart
 echo "$INSTALL_DIR" > ".cppstart/install_dir_$BUILD_TYPE"
