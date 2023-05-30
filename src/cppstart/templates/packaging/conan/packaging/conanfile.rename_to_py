@@ -20,6 +20,7 @@ class fooRecipe(ConanFile):
 
     # Add project requirements to this list
     requires = []
+    generators = "cmake"
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*", "examples/*"
