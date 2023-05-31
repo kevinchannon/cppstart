@@ -86,10 +86,11 @@ def __make_conan_lib_deps_generator(build_sys_name: str, template_root_dir: Path
 
 
 def __make_conan_generator(build_sys_name: str, project_type: ProjectType, template_root_dir: Path):
-    if project_type == ProjectType.LIB:
-        return __make_conan_lib_deps_generator(build_sys_name, template_root_dir)
-    else:
-        return ConanAppDepsMgmtGenerator({"$build_sys_name": build_sys_name}, FileReader(template_root_dir / "conan"))
+    return __make_conan_lib_deps_generator(build_sys_name, template_root_dir)
+    # if project_type == ProjectType.LIB:
+    #    return __make_conan_lib_deps_generator(build_sys_name, template_root_dir)
+    # else:
+    #    return ConanAppDepsMgmtGenerator({"$build_sys_name": build_sys_name}, FileReader(template_root_dir / "conan"))
 
 
 def make_dependency_management_generator(dep_mgr_name: str, build_sys_name: str, project_type: ProjectType,

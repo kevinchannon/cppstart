@@ -4,5 +4,5 @@ param(
 
 $BuildDir = Get-Content ".cppstart/install_dir_$BuildType"
 
-cmake -B $BuildDir
-cmake --build $BuildDir
+cmake -B $BuildDir -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+cmake --build $BuildDir  --config=$BuildType

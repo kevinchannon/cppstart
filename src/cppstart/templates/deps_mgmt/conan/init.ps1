@@ -8,8 +8,9 @@ $ErrorActionPreference = "Stop"
 
 $InstallDir = Join-Path $InstallDir $BuildType
 
-conan install .\conanfile.py -s build_type=$BuildType --build=missing -if $InstallDir
-conan install .\test\conanfile.py -s build_type=$BuildType --build=missing -if $InstallDir
+##> APP ONLY :conan install . -s build_type=$BuildType --build=missing -if $InstallDir -pr:b=default
+##> LIB ONLY :conan install .\conanfile.py -s build_type=$BuildType --build=missing -if $InstallDir -pr:b=default
+##> LIB ONLY :conan install .\test\conanfile.py -s build_type=$BuildType --build=missing -if $InstallDir -pr:b=default
 
 New-Item -ItemType Directory -Path ".cppstart" -Force | Out-Null
 $InstallDir | Out-File -FilePath ".cppstart/install_dir_$BuildType"

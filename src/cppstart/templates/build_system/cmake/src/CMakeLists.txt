@@ -4,9 +4,6 @@ add_executable(proj_name
   main.cpp
 )
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
-
 set_property(TARGET proj_name PROPERTY CXX_STANDARD 20)
 
 target_compile_options(proj_name PRIVATE

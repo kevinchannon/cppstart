@@ -6,8 +6,8 @@ add_executable(proj_nameTest
   "proj_name.tests.cpp"
 )
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+find_package(Catch2 REQUIRED)
 
 set_property(TARGET proj_nameTest PROPERTY CXX_STANDARD 20)
 
@@ -22,7 +22,7 @@ target_include_directories(proj_nameTest PRIVATE
 
 target_link_libraries(proj_nameTest
   PRIVATE
-    CONAN_PKG::catch2
+    Catch2::Catch2WithMain
     proj_nameLib::proj_nameLib
 )
 

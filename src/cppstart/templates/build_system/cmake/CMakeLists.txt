@@ -28,7 +28,10 @@ if (MASTER_PROJECT)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
   endif()
 
-  add_subdirectory(test)
+  if(NOT DEFINED ENV{PACKAGING_BUILD})
+    add_subdirectory(test)
+  endif()
+  add_subdirectory(src)
   add_subdirectory(examples)
 
   set(package_files proj_name/  CMakeLists.txt)

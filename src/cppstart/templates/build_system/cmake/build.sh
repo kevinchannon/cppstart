@@ -22,5 +22,5 @@ done
 
 BUILD_DIR=$(cat .cppstart/install_dir_${BUILD_TYPE})
 
-cmake -B "$BUILD_DIR"
-cmake --build "$BUILD_DIR"
+cmake -B "$BUILD_DIR" -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+cmake --build "$BUILD_DIR" --config=$BUILD_TYPE
